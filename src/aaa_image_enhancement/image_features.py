@@ -49,15 +49,43 @@ class ImageParams(NamedTuple):
 
 
 def enhance_image(image, params):
-    # Perform white balancing
+    if params.is_blurry:  # handle somehow jpeg blocks, now it doesn't work
+        # Apply Gaussian blur to smooth out artifacts
+        blurred = cv2.GaussianBlur(image, (5, 5), 0)
+        image = blurred
+    # White Balance Correction
     wb = cv2.xphoto.createSimpleWB()
     white_balanced = wb.balanceWhite(image)
 
-    # Adjust contrast
-    alpha = 1.2  # Contrast control (1.0-3.0)
-    adjusted = cv2.convertScaleAbs(white_balanced, alpha=alpha)
+    # Contrast Enhancement using CLAHE
+    lab = cv2.cvtColor(white_balanced, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    l_clahe = clahe.apply(l)
+    lab_clahe = cv2.merge((l_clahe, a, b))
+    contrast_enhanced = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
 
-    # Apply HDR-like enhancement
-    hdr_enhanced = cv2.detailEnhance(adjusted, sigma_s=12, sigma_r=0.15)
+    # Brightness Adjustment using Gamma Correction
+    gamma = 1.2
+    brightness_adjusted = cv2.pow(contrast_enhanced / 255.0, 1 / gamma) * 255.0
+    brightness_adjusted = np.clip(brightness_adjusted, 0, 255).astype(np.uint8)
 
-    return hdr_enhanced
+    # Sharpening using Unsharp Masking
+    blurred = cv2.GaussianBlur(brightness_adjusted, (0, 0), 2.0)
+    sharpened = cv2.addWeighted(brightness_adjusted, 1.5, blurred, -0.5, 0)
+
+    # Noise Reduction using Bilateral Filtering
+    noise_reduced = cv2.bilateralFilter(sharpened, 5, 75, 75)
+
+    # Tone Mapping using Reinhard's Photographic Tone Reproduction
+    tonemapped = cv2.createTonemapReinhard(
+        gamma=1.0, intensity=0.0, light_adapt=1.0, color_adapt=0.0
+    )
+    tonemapped_image = tonemapped.process(noise_reduced.astype(np.float32))
+    tonemapped_image = np.clip(tonemapped_image * 255, 0, 255).astype(np.uint8)
+
+    # Detail Enhancement using Guided Filtering
+    guided_filter = cv2.ximgproc.createGuidedFilter(tonemapped_image, radius=5, eps=0.1)
+    enhanced_image = guided_filter.filter(tonemapped_image, tonemapped_image)
+
+    return enhanced_image
