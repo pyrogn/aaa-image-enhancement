@@ -172,3 +172,4 @@ wheels/
 
 imgs/
 craigslist_images
+.DS_Store

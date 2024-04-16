@@ -34,6 +34,8 @@ fonttools==4.51.0
     # via matplotlib
 idna==3.7
     # via requests
+image-dehazer==0.0.9
+    # via aaa-image-enhancement
 imageio==2.34.0
     # via scikit-image
 ipykernel==6.29.4
@@ -63,10 +65,12 @@ networkx==3.3
 numpy==1.26.4
     # via aaa-image-enhancement
     # via contourpy
+    # via image-dehazer
     # via imageio
     # via matplotlib
     # via opencv-contrib-python
     # via opencv-python
+    # via pywavelets
     # via scikit-image
     # via scipy
     # via tifffile
@@ -74,6 +78,7 @@ opencv-contrib-python==4.9.0.80
     # via aaa-image-enhancement
 opencv-python==4.9.0.80
     # via aaa-image-enhancement
+    # via image-dehazer
 packaging==24.0
     # via ipykernel
     # via lazy-loader
@@ -106,6 +111,8 @@ pyparsing==3.1.2
 python-dateutil==2.9.0.post0
     # via jupyter-client
     # via matplotlib
+pywavelets==1.6.0
+    # via aaa-image-enhancement
 pyzmq==25.1.2
     # via ipykernel
     # via jupyter-client
@@ -114,6 +121,7 @@ requests==2.31.0
 scikit-image==0.23.1
     # via aaa-image-enhancement
 scipy==1.13.0
+    # via image-dehazer
     # via scikit-image
 six==1.16.0
     # via asttokens
