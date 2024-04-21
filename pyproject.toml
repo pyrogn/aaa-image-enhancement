@@ -1,0 +1,36 @@
+[project]
+name = "aaa-image-enhancement"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "Pavel", email = "60060559+pyrogn@users.noreply.github.com" }
+]
+dependencies = [
+    "numpy>=1.26.4",
+    "opencv-python>=4.9.0.80",
+    "scikit-image>=0.23.1",
+    "ipykernel>=6.29.4",
+    "pip>=24.0",
+    "opencv-contrib-python>=4.9.0.80",
+    "matplotlib>=3.8.4",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.3",
+    "image-dehazer>=0.0.9",
+    "pywavelets>=1.6.0",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aaa_image_enhancement"]
