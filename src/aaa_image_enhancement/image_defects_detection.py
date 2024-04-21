@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 import cv2
 import numpy as np
 from skimage.exposure import is_low_contrast as ski_is_low_contrast
@@ -17,11 +18,23 @@ from PIL import Image, ImageChops
 
 @dataclass
 class ImageDefects:
+    """Image features for defect detection."""
+
     blur: bool = False
     low_light: bool = False
     low_contrast: bool = False
     poor_white_balance: bool = False
     noisy: bool = False
+
+
+class DefectNames(Enum):
+    """Defect Enums to use in assignment and indexing"""
+
+    BLUR = "blur"
+    LOW_LIGHT = "low_light"
+    LOW_CONTRAST = "low_contrast"
+    POOR_WHITE_BALANCE = "poor_white_balance"
+    NOISY = "noisy"
 
 
 # Почитать про протокол
@@ -93,13 +106,20 @@ class DefectsDetectorOpenCV:
     def find_defects(self) -> ImageDefects:
         defects = ImageDefects()
         # maybe add feature to selectively apply detectors?
-        defects.blur = self.is_blurry(self.params.get("blur_threshold", 100.0))
-        defects.low_light = self.is_low_light(
+        # is it too repetitive?
+        defects.__dict__[DefectNames.BLUR.value] = self.is_blurry(
+            self.params.get("blur_threshold", 100.0)
+        )
+        defects.__dict__[DefectNames.LOW_LIGHT.value] = self.is_low_light(
             self.params.get("low_light_threshold", 80)
         )
-        defects.low_contrast = self.is_low_contrast(
+        defects.__dict__[DefectNames.LOW_CONTRAST.value] = self.is_low_contrast(
             self.params.get("low_contrast_threshold", 0.35)
         )
-        defects.poor_white_balance = self.is_poor_white_balance()
-        defects.noisy = self.is_noisy(self.params.get("noisy_threshold", 2.0))
+        defects.__dict__[DefectNames.POOR_WHITE_BALANCE.value] = (
+            self.is_poor_white_balance()
+        )
+        defects.__dict__[DefectNames.NOISY.value] = self.is_noisy(
+            self.params.get("noisy_threshold", 2.0)
+        )
         return defects

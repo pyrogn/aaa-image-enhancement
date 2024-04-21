@@ -5,23 +5,23 @@ import cv2
 from cv2.typing import MatLike
 import image_dehazer
 from aaa_image_enhancement.exposure_enhancement import enhance_image_exposure
-from aaa_image_enhancement.image_defects_detection import ImageDefects
+from aaa_image_enhancement.image_defects_detection import DefectNames, ImageDefects
 
 
 class ImageEnhancer(Protocol):
-    def __init__(self, img: np.ndarray, defects: ImageDefects) -> None: ...
-    def enhance_image(self) -> np.ndarray: ...
+    def __init__(self, img: np.ndarray) -> None: ...
+    def fix_defect(self, img: np.ndarray, defect: DefectNames) -> np.ndarray: ...
 
 
 class ImageEnhancerOpenCV:
-    def __init__(self, img: np.ndarray, defects: ImageDefects) -> None:
+    def __init__(self, img: np.ndarray) -> None:
         self.img = img
-        self.defects = defects
         self.map_defect_fn = {
-            "blur": self.deblur_image,
-            "noisy": self.dehaze_image,
-            "poor_white_balance": self.enhance_wb_image,
-            "low_light": self.enhance_low_light,
+            DefectNames.BLUR: self.deblur_image,
+            DefectNames.NOISY: self.dehaze_image,
+            DefectNames.POOR_WHITE_BALANCE: self.enhance_wb_image,
+            DefectNames.LOW_LIGHT: self.enhance_low_light,
+            # add low_contrast
         }
 
     def deblur_image(self, image, sharpen_strength=9) -> MatLike:
@@ -60,11 +60,41 @@ class ImageEnhancerOpenCV:
         # https://github.com/pvnieo/Low-light-Image-Enhancement/tree/master
         return enhance_image_exposure(image, gamma=gamma, lambda_=lambda_)
 
+    def fix_defect(self, img: np.ndarray, defect: DefectNames) -> np.ndarray:
+        enhancement_fn = self.map_defect_fn[defect]
+        enhanced_img = enhancement_fn(img)
+        return enhanced_img
+
+
+class EnhanceAgent(Protocol):
+    """Agent to apply enhancements using some rule. E.g. 1 or 2 enhancements."""
+
+    def __init__(
+        self, img: np.ndarray, image_enhancer: ImageEnhancer, defects: ImageDefects
+    ) -> None: ...
+    def enhance_image(self) -> np.ndarray: ...
+
+
+class EnhanceAgentFirst:
+    """Simple strategy to apply top priority enhancement."""
+
+    def __init__(
+        self, img: np.ndarray, image_enhancer: ImageEnhancer, defects: ImageDefects
+    ) -> None:
+        self.defects = defects
+        self.img = img
+        self.image_enhancer = image_enhancer
+        self.priority_defects = [
+            DefectNames.BLUR,
+            DefectNames.LOW_LIGHT,
+            DefectNames.POOR_WHITE_BALANCE,
+            DefectNames.NOISY,
+        ]
+
     def enhance_image(self) -> np.ndarray:
-        for defect in fields(self.defects):
-            if getattr(self.defects, defect.name):
-                enhancement_fn = self.map_defect_fn[defect.name]
-                enhanced_image = enhancement_fn(self.img)
-                return np.array(enhanced_image)
+        for defect in self.priority_defects:
+            if self.defects.__dict__[defect.value]:
+                enhanced_img = self.image_enhancer.fix_defect(self.img, defect)
+                return np.array(enhanced_img)
         print("no enhancement required")
         return self.img
