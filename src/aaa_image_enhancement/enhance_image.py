@@ -14,6 +14,8 @@ class ImageEnhancer(Protocol):
 
 
 class ImageEnhancerOpenCV:
+    """Image enhancer based on classical techniques"""
+
     def __init__(self, img: np.ndarray) -> None:
         self.img = img
         self.map_defect_fn = {
@@ -61,6 +63,7 @@ class ImageEnhancerOpenCV:
         return enhance_image_exposure(image, gamma=gamma, lambda_=lambda_)
 
     def fix_defect(self, img: np.ndarray, defect: DefectNames) -> np.ndarray:
+        # cannot pass parameters. Do we need them?
         enhancement_fn = self.map_defect_fn[defect]
         enhanced_img = enhancement_fn(img)
         return enhanced_img

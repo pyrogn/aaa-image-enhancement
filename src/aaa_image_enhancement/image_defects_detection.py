@@ -16,6 +16,7 @@ from PIL import Image, ImageChops
 # потом на их основе определять дефекты (bool)
 
 
+# Добавить вертикальные фото
 @dataclass
 class ImageDefects:
     """Image features for defect detection."""
@@ -28,7 +29,9 @@ class ImageDefects:
 
 
 class DefectNames(Enum):
-    """Defect Enums to use in assignment and indexing"""
+    """Defect Enums to use in assignment and indexing.
+
+    Value is a name of an ImageDefects dataclass attribute."""
 
     BLUR = "blur"
     LOW_LIGHT = "low_light"

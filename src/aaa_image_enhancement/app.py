@@ -1,1 +1,1 @@
-"""Here will be Flask app"""
+"""Here will be Flask app (one of several)."""
