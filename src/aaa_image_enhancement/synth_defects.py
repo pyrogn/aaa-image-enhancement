@@ -14,7 +14,7 @@ class ImageDistortions:
     def __init__(self, img):
         self.img_conv = ImageConversions(img)
         self.img = self.img_conv.to_numpy()
-        self.distortion_methods = {
+        self.distortion_methods = {  # TODO: replace string with enum?
             "blur": self.blur,
             "low_light": self.low_light,
             "poor_white_balance": self.poor_white_balance,
@@ -26,14 +26,14 @@ class ImageDistortions:
         }
         self.applied_distortions = []
 
-    def apply_distortions(self, distortion_types):
+    def apply_distortions(self, distortion_types) -> tuple[np.ndarray, list[str]]:
         for distortion_type in distortion_types:
             if distortion_type in self.distortion_methods:
                 self.img = self.distortion_methods[distortion_type]()
                 self.applied_distortions.append(distortion_type)
             else:
                 raise ValueError(f"Invalid distortion type: {distortion_type}")
-        return self.img_conv.numpy_to_pil(self.img), self.applied_distortions
+        return self.img, self.applied_distortions
 
     def rotation(self):
         # если использовать, то надо научиться делать кроп,
