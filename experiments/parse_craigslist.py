@@ -1,8 +1,9 @@
-import requests
-from bs4 import BeautifulSoup
+import logging
 import os
 import time
-import logging
+
+import requests
+from bs4 import BeautifulSoup
 
 # Configure logging
 logging.basicConfig(

@@ -4,7 +4,7 @@
 # last locked with the following flags:
 #   pre: false
 #   features: []
-#   all-features: false
+#   all-features: true
 #   with-sources: false
 
 -e file:.
@@ -14,10 +14,16 @@ asttokens==2.4.1
     # via stack-data
 beautifulsoup4==4.12.3
     # via aaa-image-enhancement
+black==24.4.0
+    # via aaa-image-enhancement
 certifi==2024.2.2
     # via requests
+cfgv==3.4.0
+    # via pre-commit
 charset-normalizer==3.3.2
     # via requests
+click==8.1.7
+    # via black
 comm==0.2.2
     # via ipykernel
 contourpy==1.2.1
@@ -28,16 +34,24 @@ debugpy==1.8.1
     # via ipykernel
 decorator==5.1.1
     # via ipython
+distlib==0.3.8
+    # via virtualenv
 executing==2.0.1
     # via stack-data
+filelock==3.13.4
+    # via virtualenv
 fonttools==4.51.0
     # via matplotlib
+identify==2.5.36
+    # via pre-commit
 idna==3.7
     # via requests
 image-dehazer==0.0.9
     # via aaa-image-enhancement
-imageio==2.34.0
+imageio==2.34.1
     # via scikit-image
+iniconfig==2.0.0
+    # via pytest
 ipykernel==6.29.4
     # via aaa-image-enhancement
 ipython==8.23.0
@@ -55,13 +69,20 @@ lazy-loader==0.4
     # via scikit-image
 matplotlib==3.8.4
     # via aaa-image-enhancement
-matplotlib-inline==0.1.6
+matplotlib-inline==0.1.7
     # via ipykernel
     # via ipython
+mypy==1.9.0
+    # via aaa-image-enhancement
+mypy-extensions==1.0.0
+    # via black
+    # via mypy
 nest-asyncio==1.6.0
     # via ipykernel
 networkx==3.3
     # via scikit-image
+nodeenv==1.8.0
+    # via pre-commit
 numpy==1.26.4
     # via aaa-image-enhancement
     # via contourpy
@@ -80,12 +101,16 @@ opencv-python==4.9.0.80
     # via aaa-image-enhancement
     # via image-dehazer
 packaging==24.0
+    # via black
     # via ipykernel
     # via lazy-loader
     # via matplotlib
+    # via pytest
     # via scikit-image
 parso==0.8.4
     # via jedi
+pathspec==0.12.1
+    # via black
 pexpect==4.9.0
     # via ipython
 pillow==10.3.0
@@ -95,7 +120,13 @@ pillow==10.3.0
 pip==24.0
     # via aaa-image-enhancement
 platformdirs==4.2.0
+    # via black
     # via jupyter-core
+    # via virtualenv
+pluggy==1.5.0
+    # via pytest
+pre-commit==3.7.0
+    # via aaa-image-enhancement
 prompt-toolkit==3.0.43
     # via ipython
 psutil==5.9.8
@@ -108,21 +139,29 @@ pygments==2.17.2
     # via ipython
 pyparsing==3.1.2
     # via matplotlib
+pytest==8.1.1
+    # via aaa-image-enhancement
 python-dateutil==2.9.0.post0
     # via jupyter-client
     # via matplotlib
 pywavelets==1.6.0
     # via aaa-image-enhancement
-pyzmq==25.1.2
+pyyaml==6.0.1
+    # via pre-commit
+pyzmq==26.0.2
     # via ipykernel
     # via jupyter-client
 requests==2.31.0
     # via aaa-image-enhancement
-scikit-image==0.23.1
+ruff==0.4.1
+    # via aaa-image-enhancement
+scikit-image==0.23.2
     # via aaa-image-enhancement
 scipy==1.13.0
     # via image-dehazer
     # via scikit-image
+setuptools==69.5.1
+    # via nodeenv
 six==1.16.0
     # via asttokens
     # via python-dateutil
@@ -130,19 +169,25 @@ soupsieve==2.5
     # via beautifulsoup4
 stack-data==0.6.3
     # via ipython
-tifffile==2024.2.12
+tifffile==2024.4.18
     # via scikit-image
 tornado==6.4
     # via ipykernel
     # via jupyter-client
-traitlets==5.14.2
+tqdm==4.66.2
+    # via aaa-image-enhancement
+traitlets==5.14.3
     # via comm
     # via ipykernel
     # via ipython
     # via jupyter-client
     # via jupyter-core
     # via matplotlib-inline
+typing-extensions==4.11.0
+    # via mypy
 urllib3==2.2.1
     # via requests
+virtualenv==20.25.3
+    # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
