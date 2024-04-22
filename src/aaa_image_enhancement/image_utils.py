@@ -3,6 +3,9 @@ import numpy as np
 from PIL import Image, ImageChops
 
 
+# пересмотреть, так как я часто путаюсь, а нужно применять statismethod или method
+# и надо иметь в виду, что cv2 отличается от np.ndarray только
+# перемещенным 1 и 3 измерением цвета
 class ImageConversions:
     """Class helper for common format conversions."""
 
@@ -11,8 +14,6 @@ class ImageConversions:
             self.img = img
         elif isinstance(img, Image.Image):
             self.img = self.pil_to_numpy(img)
-        elif isinstance(img, cv2.Mat):
-            self.img = self.cv2_to_numpy(img)
         else:
             raise ValueError(
                 "Unsupported image type. Expected numpy.ndarray, PIL.Image, or cv2.Mat."
@@ -55,5 +56,5 @@ class ImageConversions:
         return np.array(pil_img)
 
     @staticmethod
-    def cv2_to_numpy(cv2_img):
-        return cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
+    def numpy_to_pil(np_img):
+        return Image.fromarray(np_img)
