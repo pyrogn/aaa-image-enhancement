@@ -1,3 +1,19 @@
+"""Basic asynchronous backend in FastAPI
+
+Routes:
+- /detect_problems:
+    input: image
+    output: dictionary with defects
+
+- /enhance_image
+    input: image
+    output: image (autonomously enhanced)
+
+- /fix_defect
+    input: image, defect_name (str)
+    output: image (with specific enhancement)
+"""
+
 import cv2
 import numpy as np
 from fastapi import FastAPI, File, Form, Response, UploadFile
