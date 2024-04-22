@@ -38,6 +38,8 @@ image-dehazer==0.0.9
     # via aaa-image-enhancement
 imageio==2.34.0
     # via scikit-image
+iniconfig==2.0.0
+    # via pytest
 ipykernel==6.29.4
     # via aaa-image-enhancement
 ipython==8.23.0
@@ -83,6 +85,7 @@ packaging==24.0
     # via ipykernel
     # via lazy-loader
     # via matplotlib
+    # via pytest
     # via scikit-image
 parso==0.8.4
     # via jedi
@@ -96,6 +99,8 @@ pip==24.0
     # via aaa-image-enhancement
 platformdirs==4.2.0
     # via jupyter-core
+pluggy==1.5.0
+    # via pytest
 prompt-toolkit==3.0.43
     # via ipython
 psutil==5.9.8
@@ -108,6 +113,8 @@ pygments==2.17.2
     # via ipython
 pyparsing==3.1.2
     # via matplotlib
+pytest==8.1.1
+    # via aaa-image-enhancement
 python-dateutil==2.9.0.post0
     # via jupyter-client
     # via matplotlib

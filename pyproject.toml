@@ -17,6 +17,7 @@ dependencies = [
     "beautifulsoup4>=4.12.3",
     "image-dehazer>=0.0.9",
     "pywavelets>=1.6.0",
+    "pytest>=8.1.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
