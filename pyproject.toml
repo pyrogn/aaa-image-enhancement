@@ -7,7 +7,6 @@ authors = [
 ]
 dependencies = [
     "numpy>=1.26.4",
-    "opencv-python>=4.9.0.80",
     "scikit-image>=0.23.1",
     "opencv-contrib-python>=4.9.0.80",
     "matplotlib>=3.8.4",
@@ -15,6 +14,12 @@ dependencies = [
     "image-dehazer>=0.0.9",
     "pywavelets>=1.6.0",
     "flask>=3.0.3",
+    "pydantic>=2.7.0",
+    "fastapi>=0.110.2",
+    "uvicorn[standard]>=0.29.0",
+    "python-multipart>=0.0.9",
+    "httpx>=0.27.0",
+    "opencv-python>=4.9.0.80",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
@@ -32,6 +37,7 @@ code = [
 ]
 test = [
     "pytest>=8.1.1",
+    "pytest-asyncio>=0.23.6",
 ]
 extra = [
     "beautifulsoup4>=4.12.3",

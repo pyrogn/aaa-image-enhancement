@@ -8,6 +8,12 @@
 #   with-sources: false
 
 -e file:.
+annotated-types==0.6.0
+    # via pydantic
+anyio==4.3.0
+    # via httpx
+    # via starlette
+    # via watchfiles
 appnope==0.1.4
     # via ipykernel
 asttokens==2.4.1
@@ -19,6 +25,8 @@ black==24.4.0
 blinker==1.7.0
     # via flask
 certifi==2024.2.2
+    # via httpcore
+    # via httpx
     # via requests
 cfgv==3.4.0
     # via pre-commit
@@ -27,6 +35,7 @@ charset-normalizer==3.3.2
 click==8.1.7
     # via black
     # via flask
+    # via uvicorn
 comm==0.2.2
     # via ipykernel
 contourpy==1.2.1
@@ -41,15 +50,28 @@ distlib==0.3.8
     # via virtualenv
 executing==2.0.1
     # via stack-data
+fastapi==0.110.2
+    # via aaa-image-enhancement
 filelock==3.13.4
     # via virtualenv
 flask==3.0.3
     # via aaa-image-enhancement
 fonttools==4.51.0
     # via matplotlib
+h11==0.14.0
+    # via httpcore
+    # via uvicorn
+httpcore==1.0.5
+    # via httpx
+httptools==0.6.1
+    # via uvicorn
+httpx==0.27.0
+    # via aaa-image-enhancement
 identify==2.5.36
     # via pre-commit
 idna==3.7
+    # via anyio
+    # via httpx
     # via requests
 image-dehazer==0.0.9
     # via aaa-image-enhancement
@@ -147,19 +169,32 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
+pydantic==2.7.0
+    # via aaa-image-enhancement
+    # via fastapi
+pydantic-core==2.18.1
+    # via pydantic
 pygments==2.17.2
     # via ipython
 pyparsing==3.1.2
     # via matplotlib
 pytest==8.1.1
     # via aaa-image-enhancement
+    # via pytest-asyncio
+pytest-asyncio==0.23.6
+    # via aaa-image-enhancement
 python-dateutil==2.9.0.post0
     # via jupyter-client
     # via matplotlib
+python-dotenv==1.0.1
+    # via uvicorn
+python-multipart==0.0.9
+    # via aaa-image-enhancement
 pywavelets==1.6.0
     # via aaa-image-enhancement
 pyyaml==6.0.1
     # via pre-commit
+    # via uvicorn
 pyzmq==26.0.2
     # via ipykernel
     # via jupyter-client
@@ -177,10 +212,15 @@ setuptools==69.5.1
 six==1.16.0
     # via asttokens
     # via python-dateutil
+sniffio==1.3.1
+    # via anyio
+    # via httpx
 soupsieve==2.5
     # via beautifulsoup4
 stack-data==0.6.3
     # via ipython
+starlette==0.37.2
+    # via fastapi
 tifffile==2024.4.18
     # via scikit-image
 tornado==6.4
@@ -196,12 +236,23 @@ traitlets==5.14.3
     # via jupyter-core
     # via matplotlib-inline
 typing-extensions==4.11.0
+    # via fastapi
     # via mypy
+    # via pydantic
+    # via pydantic-core
 urllib3==2.2.1
     # via requests
+uvicorn==0.29.0
+    # via aaa-image-enhancement
+uvloop==0.19.0
+    # via uvicorn
 virtualenv==20.25.3
     # via pre-commit
+watchfiles==0.21.0
+    # via uvicorn
 wcwidth==0.2.13
     # via prompt-toolkit
+websockets==12.0
+    # via uvicorn
 werkzeug==3.0.2
     # via flask
