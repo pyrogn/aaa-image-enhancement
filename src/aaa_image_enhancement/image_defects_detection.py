@@ -20,7 +20,8 @@ class ImageDefects:
 class DefectNames(Enum):
     """Defect Enums to use in assignment and indexing.
 
-    Value is a name of an ImageDefects dataclass attribute."""
+    Value is a name of an ImageDefects dataclass attribute.
+    """
 
     BLUR = "blur"
     LOW_LIGHT = "low_light"
