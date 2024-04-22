@@ -1,11 +1,9 @@
-from dataclasses import fields
-from typing import Callable, Protocol
-import numpy as np
 import cv2
-from cv2.typing import MatLike
 import image_dehazer
+import numpy as np
+from cv2.typing import MatLike
+
 from aaa_image_enhancement.exposure_enhancement import enhance_image_exposure
-from aaa_image_enhancement.image_defects_detection import DefectNames, ImageDefects
 
 
 def deblur_image(image: np.ndarray, sharpen_strength: int = 9) -> MatLike:
@@ -33,7 +31,7 @@ def enhance_wb_image(
     white_balanced_image = wb.balanceWhite(image)
 
     lab = cv2.cvtColor(white_balanced_image, cv2.COLOR_BGR2LAB)
-    l, a, b = cv2.split(lab)
+    l, a, b = cv2.split(lab)  # noqa: E741
     clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=tile_grid_size)
     enhanced_l = clahe.apply(l)
     enhanced_lab = cv2.merge((enhanced_l, a, b))

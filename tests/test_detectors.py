@@ -1,9 +1,10 @@
 import glob
+
 import cv2
 import numpy as np
 import pytest
-from aaa_image_enhancement.image_utils import ImageConversions
 from aaa_image_enhancement.defects_detection_fns import classical_detectors
+from aaa_image_enhancement.image_utils import ImageConversions
 
 
 @pytest.fixture

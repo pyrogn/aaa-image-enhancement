@@ -1,7 +1,7 @@
-from skimage.exposure import is_low_contrast as ski_is_low_contrast
-from skimage.restoration import estimate_sigma
 import cv2
 import numpy as np
+from skimage.exposure import is_low_contrast as ski_is_low_contrast
+from skimage.restoration import estimate_sigma
 
 from aaa_image_enhancement.image_utils import ImageConversions
 

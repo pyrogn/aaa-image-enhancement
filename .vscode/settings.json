@@ -5,6 +5,8 @@
     "**/__pycache__": true,
     "**/__pycache__.*": true,
     ".venv": true,
-    ".pytest_cache": true
+    ".pytest_cache": true,
+    ".ruff_cache": true,
+    ".mypy_cache": true
   }
 }
