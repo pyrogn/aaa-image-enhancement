@@ -2,21 +2,10 @@ import os
 
 import cv2
 from aaa_image_enhancement.defects_detection_fns import (
-    is_blurry,
-    is_low_contrast,
-    is_low_light,
-    is_noisy,
-    is_poor_white_balance,
+    classical_detectors,
 )
 from aaa_image_enhancement.enhance_image import EnhanceAgentFirst, ImageEnhancer
-from aaa_image_enhancement.enhancement_fns import (
-    deblur_image,
-    dehaze_image,
-    enhance_low_light,
-    enhance_wb_image,
-)
 from aaa_image_enhancement.image_defects_detection import (
-    DefectNames,
     DefectsDetector,
 )
 from aaa_image_enhancement.image_utils import ImageConversions
@@ -28,21 +17,7 @@ upload_folder = os.path.join(app.root_path, UPLOAD_FOLDER)
 os.makedirs(upload_folder, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = upload_folder
 
-detectors = {
-    DefectNames.BLUR: is_blurry,
-    DefectNames.NOISY: is_noisy,
-    DefectNames.LOW_LIGHT: is_low_light,
-    DefectNames.LOW_CONTRAST: is_low_contrast,
-    DefectNames.POOR_WHITE_BALANCE: is_poor_white_balance,
-}
-defects_detector = DefectsDetector(detectors)
-
-map_defect_fn = {
-    DefectNames.BLUR: deblur_image,
-    DefectNames.NOISY: dehaze_image,
-    DefectNames.POOR_WHITE_BALANCE: enhance_wb_image,
-    DefectNames.LOW_LIGHT: enhance_low_light,
-}
+defects_detector = DefectsDetector(classical_detectors)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -63,7 +38,7 @@ def upload_image():
 
         defects = defects_detector.find_defects(ImageConversions(img))
 
-        image_enhancer = ImageEnhancer(img, map_defect_fn)
+        image_enhancer = ImageEnhancer(img)
         enhance_agent = EnhanceAgentFirst(img, image_enhancer, defects)
 
         enhanced_img = enhance_agent.enhance_image()

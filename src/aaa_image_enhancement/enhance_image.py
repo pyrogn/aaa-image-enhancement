@@ -1,33 +1,28 @@
-from typing import Callable, Protocol
+from typing import Protocol
 
 import numpy as np
 
+from aaa_image_enhancement.enhancement_fns import get_enhancement_function
 from aaa_image_enhancement.image_defects_detection import DefectNames, ImageDefects
 
 
 class ImageEnhancer:
     """Image enhancer based on classical techniques"""
 
-    def __init__(
-        self, img: np.ndarray, map_defect_fn: dict[DefectNames, Callable]
-    ) -> None:
+    def __init__(self, img: np.ndarray) -> None:
         self.img = img
-        self.map_defect_fn = map_defect_fn
 
     def fix_defect(self, img: np.ndarray, defect: DefectNames, **kwargs) -> np.ndarray:
-        enhancement_fn = self.map_defect_fn[defect]
-        enhanced_img = enhancement_fn(img, **kwargs)
-        return enhanced_img
+        enhancement_fn = get_enhancement_function(defect)
+        if enhancement_fn:
+            enhanced_img = enhancement_fn(img, **kwargs)
+            return enhanced_img
+        else:
+            raise ValueError(f"No enhancement function defined for {defect}")
 
 
-# map_defect_fn example
-# {
-#     DefectNames.BLUR: deblur_image,
-#     DefectNames.NOISY: dehaze_image,
-#     DefectNames.POOR_WHITE_BALANCE: enhance_wb_image,
-#     DefectNames.LOW_LIGHT: enhance_low_light,
-#     # add low_contrast
-# }
+# maybe we can have attribute applied_enhancements=list[str|DefectNames]
+# to keep track of enhancements
 class EnhanceAgent(Protocol):
     """Agent to apply enhancements using some rule. E.g. 1 or 2 enhancements."""
 
@@ -58,5 +53,4 @@ class EnhanceAgentFirst:
             if self.defects.__dict__[defect.value]:
                 enhanced_img = self.image_enhancer.fix_defect(self.img, defect)
                 return np.array(enhanced_img)
-        print("no enhancement required")
         return self.img

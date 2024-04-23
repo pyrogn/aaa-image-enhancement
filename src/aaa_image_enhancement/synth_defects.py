@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageEnhance
 
+from aaa_image_enhancement.image_defects_detection import DefectNames
 from aaa_image_enhancement.image_utils import ImageConversions
 
 
@@ -14,15 +15,15 @@ class ImageDistortions:
     def __init__(self, img):
         self.img_conv = ImageConversions(img)
         self.img = self.img_conv.to_numpy()
-        self.distortion_methods = {  # TODO: replace string with enum?
-            "blur": self.blur,
-            "low_light": self.low_light,
-            "poor_white_balance": self.poor_white_balance,
-            "haziness": self.haziness,
-            "brightness": self.brightness,
-            "bad_contrast": self.bad_contrast,
-            "jpeg_artifacts": self.jpeg_artifacts,
-            "rotation": self.rotation,
+        self.distortion_methods = {
+            DefectNames.BLUR: self.blur,
+            DefectNames.LOW_LIGHT: self.low_light,
+            DefectNames.POOR_WHITE_BALANCE: self.poor_white_balance,
+            DefectNames.HAZY: self.haziness,
+            DefectNames.GLARING: self.brightness,
+            DefectNames.LOW_CONTRAST: self.low_contrast,
+            DefectNames.JPEG_ARTIFACTS: self.jpeg_artifacts,
+            DefectNames.ROTATION: self.rotation,
         }
         self.applied_distortions = []
 
@@ -94,7 +95,7 @@ class ImageDistortions:
         brightness = random.uniform(1.5, 2.5)
         return cv2.convertScaleAbs(self.img, alpha=brightness, beta=0)
 
-    def bad_contrast(self):
+    def low_contrast(self):
         contrast = random.uniform(0.3, 0.7)
         pil_img = self.img_conv.to_pil()
         enhancer = ImageEnhance.Contrast(pil_img)

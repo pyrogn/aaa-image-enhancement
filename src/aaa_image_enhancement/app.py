@@ -21,19 +21,9 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from aaa_image_enhancement.defects_detection_fns import (
-    is_blurry,
-    is_low_contrast,
-    is_low_light,
-    is_noisy,
-    is_poor_white_balance,
+    classical_detectors,
 )
 from aaa_image_enhancement.enhance_image import EnhanceAgentFirst, ImageEnhancer
-from aaa_image_enhancement.enhancement_fns import (
-    deblur_image,
-    dehaze_image,
-    enhance_low_light,
-    enhance_wb_image,
-)
 from aaa_image_enhancement.image_defects_detection import (
     DefectNames,
     DefectsDetector,
@@ -43,21 +33,7 @@ from aaa_image_enhancement.image_utils import ImageConversions
 
 app = FastAPI()
 
-detectors = {
-    DefectNames.BLUR: is_blurry,
-    DefectNames.NOISY: is_noisy,
-    DefectNames.LOW_LIGHT: is_low_light,
-    DefectNames.LOW_CONTRAST: is_low_contrast,
-    DefectNames.POOR_WHITE_BALANCE: is_poor_white_balance,
-}
-defects_detector = DefectsDetector(detectors)
-
-map_defect_fn = {
-    DefectNames.BLUR: deblur_image,
-    DefectNames.NOISY: dehaze_image,
-    DefectNames.POOR_WHITE_BALANCE: enhance_wb_image,
-    DefectNames.LOW_LIGHT: enhance_low_light,
-}
+defects_detector = DefectsDetector(classical_detectors)
 
 
 class DetectedProblems(BaseModel):
@@ -73,14 +49,14 @@ def detect_defects(image: np.ndarray) -> ImageDefects:
 
 
 def enhance_image(image: np.ndarray, defects: ImageDefects) -> np.ndarray:
-    image_enhancer = ImageEnhancer(image, map_defect_fn)
+    image_enhancer = ImageEnhancer(image)
     enhance_agent = EnhanceAgentFirst(image, image_enhancer, defects)
     return enhance_agent.enhance_image()
 
 
 def fix_specific_defect(image: np.ndarray, defect_to_fix: DefectNames) -> np.ndarray:
-    enhancement_fn = map_defect_fn[defect_to_fix]
-    return enhancement_fn(image)
+    image_enhancer = ImageEnhancer(image)
+    return image_enhancer.fix_defect(image, defect_to_fix)
 
 
 @app.post("/detect_problems", response_model=DetectedProblems)
@@ -104,6 +80,12 @@ async def enhance_image_route(image: UploadFile = File(...)):
     enhanced_img = enhance_image(img, defects)
     _, encoded_img = cv2.imencode(".jpg", enhanced_img)
     return Response(content=encoded_img.tobytes(), media_type="image/jpeg")
+    # more complicated, but we can return applied_enhancements also
+    # response = {
+    #     "enhanced_image": encoded_img_bytes,
+    #     "applied_enhancements": applied_enhancements
+    # }
+    # return JSONResponse(content=response, media_type="application/json")
 
 
 @app.post("/fix_defect")
