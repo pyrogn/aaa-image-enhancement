@@ -56,7 +56,7 @@ def enhance_image(image: np.ndarray, defects: ImageDefects) -> np.ndarray:
 
 def fix_specific_defect(image: np.ndarray, defect_to_fix: DefectNames) -> np.ndarray:
     image_enhancer = ImageEnhancer(image)
-    return image_enhancer.fix_defect(image, defect_to_fix)
+    return image_enhancer.fix_defect(defect_to_fix)
 
 
 @app.post("/detect_problems", response_model=DetectedProblems)

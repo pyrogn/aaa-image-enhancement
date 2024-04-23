@@ -55,7 +55,7 @@ def test_enhancers(test_image, enhancer):
 
 def test_image_fix_defect(test_image):
     enhancer = ImageEnhancer(test_image)
-    enhanced_image = enhancer.fix_defect(test_image, DefectNames.BLUR)
+    enhanced_image = enhancer.fix_defect(DefectNames.BLUR)
     assert isinstance(enhanced_image, np.ndarray)
     assert enhanced_image.shape == test_image.shape
 

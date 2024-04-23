@@ -12,6 +12,15 @@
                 <label for="image">Upload Image:</label>
                 <input type="file" class="form-control-file" id="image" name="image">
             </div>
+            <div class="form-group">
+                <label for="defect">Select Defect to Fix:</label>
+                <select class="form-control" id="defect" name="defect">
+                    <option value="auto">Auto (EnhanceAgentFirst)</option>
+                    {% for defect in defects.__members__ %}
+                        <option value="{{ defect }}">{{ defect }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary">Enhance Image</button>
         </form>
 
@@ -19,7 +28,7 @@
             <hr>
             <h2>Detected Defects:</h2>
             <ul>
-                {% for defect, value in defects.__dict__.items() %}
+                {% for defect, value in defects_found.__dict__.items() %}
                     {% if value %}
                         <li>{{ defect }}</li>
                     {% endif %}

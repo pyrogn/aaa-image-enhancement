@@ -12,10 +12,10 @@ class ImageEnhancer:
     def __init__(self, img: np.ndarray) -> None:
         self.img = img
 
-    def fix_defect(self, img: np.ndarray, defect: DefectNames, **kwargs) -> np.ndarray:
+    def fix_defect(self, defect: DefectNames, **kwargs) -> np.ndarray:
         enhancement_fn = get_enhancement_function(defect)
         if enhancement_fn:
-            enhanced_img = enhancement_fn(img, **kwargs)
+            enhanced_img = enhancement_fn(self.img, **kwargs)
             return enhanced_img
         else:
             raise ValueError(f"No enhancement function defined for {defect}")
@@ -51,6 +51,6 @@ class EnhanceAgentFirst:
     def enhance_image(self) -> np.ndarray:
         for defect in self.priority_defects:
             if self.defects.__dict__[defect.value]:
-                enhanced_img = self.image_enhancer.fix_defect(self.img, defect)
+                enhanced_img = self.image_enhancer.fix_defect(defect)
                 return np.array(enhanced_img)
         return self.img
