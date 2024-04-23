@@ -1,3 +1,5 @@
+"""Add synthetic distortions to clean images to make a dataset."""
+
 import random
 from io import BytesIO
 
@@ -30,7 +32,9 @@ class ImageDistortions:
         }
         self.applied_distortions = []
 
-    def apply_distortions(self, distortion_types) -> tuple[np.ndarray, list[str]]:
+    def apply_distortions(
+        self, distortion_types
+    ) -> tuple[np.ndarray, list[DefectNames]]:
         for distortion_type in distortion_types:
             if distortion_type in self.distortion_methods:
                 self.img = self.distortion_methods[distortion_type]()

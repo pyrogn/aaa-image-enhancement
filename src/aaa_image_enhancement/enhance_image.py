@@ -2,7 +2,10 @@ from typing import Protocol
 
 import numpy as np
 
-from aaa_image_enhancement.enhancement_fns import get_enhancement_function
+from aaa_image_enhancement.enhancement_fns import (
+    ENHANCEMENT_MAP,
+    get_enhancement_function,
+)
 from aaa_image_enhancement.image_defects_detection import DefectNames, ImageDefects
 
 
@@ -41,12 +44,7 @@ class EnhanceAgentFirst:
         self.defects = defects
         self.img = img
         self.image_enhancer = image_enhancer
-        self.priority_defects = [  # I wish it could be defined in defects_fns.py file
-            DefectNames.BLUR,
-            DefectNames.LOW_LIGHT,
-            DefectNames.POOR_WHITE_BALANCE,
-            DefectNames.NOISY,
-        ]
+        self.priority_defects = list(ENHANCEMENT_MAP.keys())
 
     def enhance_image(self) -> np.ndarray:
         for defect in self.priority_defects:

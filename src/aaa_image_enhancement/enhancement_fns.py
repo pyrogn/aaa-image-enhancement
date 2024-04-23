@@ -58,11 +58,12 @@ classical_enhancement_fns = [
     enhance_low_light,
 ]
 
+# sorted, actually, from most to least important
 ENHANCEMENT_MAP = {
     DefectNames.BLUR: deblur_image,
-    DefectNames.NOISY: dehaze_image,
-    DefectNames.POOR_WHITE_BALANCE: enhance_wb_image,
     DefectNames.LOW_LIGHT: enhance_low_light,
+    DefectNames.POOR_WHITE_BALANCE: enhance_wb_image,
+    DefectNames.NOISY: dehaze_image,
 }
 
 
