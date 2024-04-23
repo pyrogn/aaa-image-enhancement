@@ -2,11 +2,7 @@ import os
 
 import cv2
 from aaa_image_enhancement.defects_detection_fns import (
-    is_blurry,
-    is_low_contrast,
-    is_low_light,
-    is_noisy,
-    is_poor_white_balance,
+    classical_detectors,
 )
 from aaa_image_enhancement.enhance_image import EnhanceAgentFirst, ImageEnhancer
 from aaa_image_enhancement.enhancement_fns import (
@@ -28,14 +24,7 @@ upload_folder = os.path.join(app.root_path, UPLOAD_FOLDER)
 os.makedirs(upload_folder, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = upload_folder
 
-detectors = {
-    DefectNames.BLUR: is_blurry,
-    DefectNames.NOISY: is_noisy,
-    DefectNames.LOW_LIGHT: is_low_light,
-    DefectNames.LOW_CONTRAST: is_low_contrast,
-    DefectNames.POOR_WHITE_BALANCE: is_poor_white_balance,
-}
-defects_detector = DefectsDetector(detectors)
+defects_detector = DefectsDetector(classical_detectors)
 
 map_defect_fn = {
     DefectNames.BLUR: deblur_image,

@@ -21,6 +21,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from aaa_image_enhancement.defects_detection_fns import (
+    classical_detectors,
     is_blurry,
     is_low_contrast,
     is_low_light,
@@ -50,7 +51,7 @@ detectors = {
     DefectNames.LOW_CONTRAST: is_low_contrast,
     DefectNames.POOR_WHITE_BALANCE: is_poor_white_balance,
 }
-defects_detector = DefectsDetector(detectors)
+defects_detector = DefectsDetector(classical_detectors)
 
 map_defect_fn = {
     DefectNames.BLUR: deblur_image,

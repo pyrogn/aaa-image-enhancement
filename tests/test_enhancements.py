@@ -13,6 +13,12 @@ def image_path():
 
 
 @pytest.fixture
+def test_image():
+    img = np.zeros((100, 100, 3), dtype=np.uint8)
+    return ImageConversions(img).to_numpy()
+
+
+@pytest.fixture
 def image(image_path):
     img = cv2.imread(image_path)
     return ImageConversions(img)
@@ -24,7 +30,7 @@ def numpy_image(image_path):
 
 
 @pytest.mark.parametrize("enhancer", classical_enhancement_fns)
-def test_enhancers(numpy_image, enhancer):
-    enhanced_image = enhancer(numpy_image)
+def test_enhancers(test_image, enhancer):
+    enhanced_image = enhancer(test_image)
     assert isinstance(enhanced_image, np.ndarray)
-    assert numpy_image.shape == enhanced_image.shape
+    assert test_image.shape == enhanced_image.shape

@@ -1,3 +1,5 @@
+"""File with functions for image enhancement for specific defects."""
+
 import cv2
 import image_dehazer
 import numpy as np
@@ -47,6 +49,7 @@ def enhance_low_light(
     return enhance_image_exposure(image, gamma=gamma, lambda_=lambda_)
 
 
+# used for basic testing
 classical_enhancement_fns = [
     deblur_image,
     dehaze_image,

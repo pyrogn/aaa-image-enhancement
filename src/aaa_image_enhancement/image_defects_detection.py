@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Protocol
+from typing import Callable
 
 from aaa_image_enhancement.image_utils import ImageConversions
 
@@ -32,18 +32,19 @@ class DefectNames(Enum):
 
 # Почитать про протокол
 # https://idego-group.com/blog/2023/02/21/we-need-to-talk-about-protocols-in-python/
-class DefectDetector(Protocol):
-    def __call__(self, image: ImageConversions, **kwargs) -> bool: ...
+# class DefectDetector(Protocol):
+#     def __call__(self, image: ImageConversions, **kwargs) -> bool: ...
 
 
 class DefectsDetector:
-    def __init__(self, detectors: dict[DefectNames, DefectDetector]) -> None:
+    def __init__(self, detectors: list[Callable]) -> None:
         self.detectors = detectors
 
     def find_defects(self, image: ImageConversions, **kwargs) -> ImageDefects:
         defects = ImageDefects()
-        for defect_name, detector in self.detectors.items():
-            defects.__dict__[defect_name.value] = detector(
-                image, **kwargs.get(defect_name.value, {})
-            )
+        for detector in self.detectors:
+            # нельзя передать параметры, а надо ли?
+            # если нужна функция, сам импортируешь и меняешь параметр
+            detected_result = {k.value: v for k, v in detector(image).items()}
+            defects.__dict__.update(detected_result)
         return defects
