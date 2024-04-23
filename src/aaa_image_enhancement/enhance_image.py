@@ -24,7 +24,7 @@ class ImageEnhancer:
 # maybe we can have attribute applied_enhancements=list[str|DefectNames]
 # to keep track of enhancements
 class EnhanceAgent(Protocol):
-    """Agent to apply enhancements using some rule. E.g. 1 or 2 enhancements."""
+    """Autonomous agent to apply image enhancements using some rule."""
 
     def __init__(
         self, img: np.ndarray, image_enhancer: ImageEnhancer, defects: ImageDefects
@@ -41,7 +41,7 @@ class EnhanceAgentFirst:
         self.defects = defects
         self.img = img
         self.image_enhancer = image_enhancer
-        self.priority_defects = [
+        self.priority_defects = [  # I wish it could be defined in defects_fns.py file
             DefectNames.BLUR,
             DefectNames.LOW_LIGHT,
             DefectNames.POOR_WHITE_BALANCE,

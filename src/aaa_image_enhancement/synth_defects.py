@@ -22,6 +22,7 @@ class ImageDistortions:
             DefectNames.LOW_LIGHT: self.low_light,
             DefectNames.POOR_WHITE_BALANCE: self.poor_white_balance,
             DefectNames.HAZY: self.haziness,
+            DefectNames.NOISY: self.noisy,
             DefectNames.GLARING: self.brightness,
             DefectNames.LOW_CONTRAST: self.low_contrast,
             DefectNames.JPEG_ARTIFACTS: self.jpeg_artifacts,
@@ -37,6 +38,16 @@ class ImageDistortions:
             else:
                 raise ValueError(f"Invalid distortion type: {distortion_type}")
         return self.img, self.applied_distortions
+
+    def noisy(self):
+        """Add random Gaussian noise to the image."""
+        mean = 0
+        var = random.uniform(0.01, 0.05)
+        sigma = var**0.5
+        gaussian = np.random.normal(mean, sigma, self.img.shape)
+        noisy_img = self.img + gaussian * 255  # type: ignore
+        noisy_img = np.clip(noisy_img, 0, 255)
+        return noisy_img.astype(np.uint8)
 
     def rotation(self):
         # если использовать, то надо научиться делать кроп,

@@ -1,3 +1,5 @@
+"""Frontend to open image and apply automatic enhancement or specific one."""
+
 import os
 
 import cv2

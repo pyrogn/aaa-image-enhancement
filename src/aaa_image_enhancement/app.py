@@ -1,4 +1,4 @@
-"""Basic asynchronous backend in FastAPI
+"""Basic asynchronous backend in FastAPI.
 
 Routes:
 - /detect_problems:
