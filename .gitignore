@@ -170,10 +170,6 @@ wheels/
 .venv
 
 
-imgs/
-craigslist_images
 .DS_Store
-data/real_estate_images/
-demo/uploads
 **/*.jpg
-data/random_imgs
+**/*.jpeg

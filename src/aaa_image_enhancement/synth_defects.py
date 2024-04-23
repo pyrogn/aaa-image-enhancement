@@ -1,3 +1,5 @@
+"""Add synthetic distortions to clean images to make a dataset."""
+
 import random
 from io import BytesIO
 
@@ -9,6 +11,8 @@ from aaa_image_enhancement.image_defects_detection import DefectNames
 from aaa_image_enhancement.image_utils import ImageConversions
 
 
+# можно смело добавлять больше разнообразия в дефекты,
+# так как здесь пока чаще только 1 алгоритм применяется
 class ImageDistortions:
     """Add distortions to clean image and get decent synth data."""
 
@@ -20,6 +24,7 @@ class ImageDistortions:
             DefectNames.LOW_LIGHT: self.low_light,
             DefectNames.POOR_WHITE_BALANCE: self.poor_white_balance,
             DefectNames.HAZY: self.haziness,
+            DefectNames.NOISY: self.noisy,
             DefectNames.GLARING: self.brightness,
             DefectNames.LOW_CONTRAST: self.low_contrast,
             DefectNames.JPEG_ARTIFACTS: self.jpeg_artifacts,
@@ -27,7 +32,9 @@ class ImageDistortions:
         }
         self.applied_distortions = []
 
-    def apply_distortions(self, distortion_types) -> tuple[np.ndarray, list[str]]:
+    def apply_distortions(
+        self, distortion_types
+    ) -> tuple[np.ndarray, list[DefectNames]]:
         for distortion_type in distortion_types:
             if distortion_type in self.distortion_methods:
                 self.img = self.distortion_methods[distortion_type]()
@@ -35,6 +42,16 @@ class ImageDistortions:
             else:
                 raise ValueError(f"Invalid distortion type: {distortion_type}")
         return self.img, self.applied_distortions
+
+    def noisy(self):
+        """Add random Gaussian noise to the image."""
+        mean = 0
+        var = random.uniform(0.01, 0.05)
+        sigma = var**0.5
+        gaussian = np.random.normal(mean, sigma, self.img.shape)
+        noisy_img = self.img + gaussian * 255  # type: ignore
+        noisy_img = np.clip(noisy_img, 0, 255)
+        return noisy_img.astype(np.uint8)
 
     def rotation(self):
         # если использовать, то надо научиться делать кроп,
@@ -49,11 +66,34 @@ class ImageDistortions:
         return self.img_conv.pil_to_numpy(im)
 
     def blur(self):
-        if random.random() < 0.5:
+        blur_type = random.choice(
+            ["gaussian", "motion", "average", "median", "bilateral"]
+        )
+        if blur_type == "gaussian":
             img = self._gaussian_blur()
-        else:
+        elif blur_type == "motion":
             img = self._motion_blur()
+        elif blur_type == "average":
+            img = self._average_blur()
+        elif blur_type == "median":
+            img = self._median_blur()
+        elif blur_type == "bilateral":
+            img = self._bilateral_blur()
         return img
+
+    def _average_blur(self):
+        kernel_size = random.choice([3, 5, 7, 9, 11])
+        return cv2.blur(self.img, (kernel_size, kernel_size))
+
+    def _median_blur(self):
+        kernel_size = random.choice([3, 5, 7, 9, 11])
+        return cv2.medianBlur(self.img, kernel_size)
+
+    def _bilateral_blur(self):
+        diameter = random.choice([5, 7, 9, 11])
+        sigma_color = random.uniform(50, 100)
+        sigma_space = random.uniform(50, 100)
+        return cv2.bilateralFilter(self.img, diameter, sigma_color, sigma_space)
 
     def _gaussian_blur(self):
         kernel_size = random.choice([7, 9, 11])

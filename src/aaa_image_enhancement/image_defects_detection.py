@@ -15,8 +15,13 @@ class ImageDefects:
     low_contrast: bool = False
     poor_white_balance: bool = False
     noisy: bool = False
+    hazy: bool = False
+    jpeg_artifacts: bool = False
+    glaring: bool = False
+    rotation: bool = False
 
 
+# add test to match enum value to key in dataclass?
 class DefectNames(Enum):
     """Defect Enums to use in assignment and indexing.
 
@@ -28,7 +33,7 @@ class DefectNames(Enum):
     LOW_CONTRAST = "low_contrast"
     POOR_WHITE_BALANCE = "poor_white_balance"
     NOISY = "noisy"
-    HAZY = "noisy"
+    HAZY = "hazy"
     JPEG_ARTIFACTS = "jpeg_artifacts"
     GLARING = "glaring"
     ROTATION = "rotation"
@@ -42,6 +47,12 @@ class DefectNames(Enum):
 
 class DefectsDetector:
     def __init__(self, detectors: list[Callable]) -> None:
+        """_summary_
+
+        Args:
+            detectors (list[Callable]): detectors should be sorted from least to most
+                important, because later ones can override results
+        """
         self.detectors = detectors
 
     def find_defects(self, image: ImageConversions, **kwargs) -> ImageDefects:

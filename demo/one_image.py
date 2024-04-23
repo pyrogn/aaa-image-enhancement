@@ -1,3 +1,5 @@
+"""Frontend to open image and apply automatic enhancement or specific one."""
+
 import os
 
 import cv2
@@ -6,6 +8,7 @@ from aaa_image_enhancement.defects_detection_fns import (
 )
 from aaa_image_enhancement.enhance_image import EnhanceAgentFirst, ImageEnhancer
 from aaa_image_enhancement.image_defects_detection import (
+    DefectNames,
     DefectsDetector,
 )
 from aaa_image_enhancement.image_utils import ImageConversions
@@ -38,10 +41,16 @@ def upload_image():
 
         defects = defects_detector.find_defects(ImageConversions(img))
 
-        image_enhancer = ImageEnhancer(img)
-        enhance_agent = EnhanceAgentFirst(img, image_enhancer, defects)
+        selected_defect = request.form.get("defect")
 
-        enhanced_img = enhance_agent.enhance_image()
+        image_enhancer = ImageEnhancer(img)
+
+        if selected_defect == "auto":
+            enhance_agent = EnhanceAgentFirst(img, image_enhancer, defects)
+            enhanced_img = enhance_agent.enhance_image()
+        else:
+            assert selected_defect
+            enhanced_img = image_enhancer.fix_defect(DefectNames[selected_defect])
 
         enhanced_img_path = os.path.join(
             app.config["UPLOAD_FOLDER"], "enhanced_" + str(file.filename)
@@ -50,12 +59,13 @@ def upload_image():
 
         return render_template(
             "index.html",
-            defects=defects,
+            defects=DefectNames,
+            defects_found=defects,
             original_image=file.filename,
             enhanced_image="enhanced_" + str(file.filename),
         )
 
-    return render_template("index.html")
+    return render_template("index.html", defects=DefectNames)
 
 
 @app.route("/uploads/<filename>")
