@@ -28,6 +28,10 @@ class DefectNames(Enum):
     LOW_CONTRAST = "low_contrast"
     POOR_WHITE_BALANCE = "poor_white_balance"
     NOISY = "noisy"
+    HAZY = "noisy"
+    JPEG_ARTIFACTS = "jpeg_artifacts"
+    GLARING = "glaring"
+    ROTATION = "rotation"
 
 
 # Почитать про протокол

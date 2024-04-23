@@ -21,6 +21,8 @@ class ImageEnhancer:
             raise ValueError(f"No enhancement function defined for {defect}")
 
 
+# maybe we can have attribute applied_enhancements=list[str|DefectNames]
+# to keep track of enhancements
 class EnhanceAgent(Protocol):
     """Agent to apply enhancements using some rule. E.g. 1 or 2 enhancements."""
 
