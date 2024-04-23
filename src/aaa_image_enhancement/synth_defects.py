@@ -9,6 +9,8 @@ from aaa_image_enhancement.image_defects_detection import DefectNames
 from aaa_image_enhancement.image_utils import ImageConversions
 
 
+# можно смело добавлять больше разнообразия в дефекты,
+# так как здесь пока чаще только 1 алгоритм применяется
 class ImageDistortions:
     """Add distortions to clean image and get decent synth data."""
 
@@ -49,11 +51,34 @@ class ImageDistortions:
         return self.img_conv.pil_to_numpy(im)
 
     def blur(self):
-        if random.random() < 0.5:
+        blur_type = random.choice(
+            ["gaussian", "motion", "average", "median", "bilateral"]
+        )
+        if blur_type == "gaussian":
             img = self._gaussian_blur()
-        else:
+        elif blur_type == "motion":
             img = self._motion_blur()
+        elif blur_type == "average":
+            img = self._average_blur()
+        elif blur_type == "median":
+            img = self._median_blur()
+        elif blur_type == "bilateral":
+            img = self._bilateral_blur()
         return img
+
+    def _average_blur(self):
+        kernel_size = random.choice([3, 5, 7, 9, 11])
+        return cv2.blur(self.img, (kernel_size, kernel_size))
+
+    def _median_blur(self):
+        kernel_size = random.choice([3, 5, 7, 9, 11])
+        return cv2.medianBlur(self.img, kernel_size)
+
+    def _bilateral_blur(self):
+        diameter = random.choice([5, 7, 9, 11])
+        sigma_color = random.uniform(50, 100)
+        sigma_space = random.uniform(50, 100)
+        return cv2.bilateralFilter(self.img, diameter, sigma_color, sigma_space)
 
     def _gaussian_blur(self):
         kernel_size = random.choice([7, 9, 11])

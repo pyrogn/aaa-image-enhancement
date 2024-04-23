@@ -38,6 +38,7 @@ click==8.1.7
     # via uvicorn
 comm==0.2.2
     # via ipykernel
+    # via ipywidgets
 contourpy==1.2.1
     # via matplotlib
 cycler==0.12.1
@@ -75,6 +76,8 @@ idna==3.7
     # via requests
 image-dehazer==0.0.9
     # via aaa-image-enhancement
+imagehash==4.3.1
+    # via aaa-image-enhancement
 imageio==2.34.1
     # via scikit-image
 iniconfig==2.0.0
@@ -83,6 +86,9 @@ ipykernel==6.29.4
     # via aaa-image-enhancement
 ipython==8.23.0
     # via ipykernel
+    # via ipywidgets
+ipywidgets==8.1.2
+    # via aaa-image-enhancement
 itsdangerous==2.2.0
     # via flask
 jedi==0.19.1
@@ -94,6 +100,8 @@ jupyter-client==8.6.1
 jupyter-core==5.7.2
     # via ipykernel
     # via jupyter-client
+jupyterlab-widgets==3.0.10
+    # via ipywidgets
 kiwisolver==1.4.5
     # via matplotlib
 lazy-loader==0.4
@@ -121,6 +129,7 @@ numpy==1.26.4
     # via aaa-image-enhancement
     # via contourpy
     # via image-dehazer
+    # via imagehash
     # via imageio
     # via matplotlib
     # via opencv-contrib-python
@@ -148,6 +157,7 @@ pathspec==0.12.1
 pexpect==4.9.0
     # via ipython
 pillow==10.3.0
+    # via imagehash
     # via imageio
     # via matplotlib
     # via scikit-image
@@ -192,6 +202,7 @@ python-multipart==0.0.9
     # via aaa-image-enhancement
 pywavelets==1.6.0
     # via aaa-image-enhancement
+    # via imagehash
 pyyaml==6.0.1
     # via pre-commit
     # via uvicorn
@@ -206,6 +217,7 @@ scikit-image==0.23.2
     # via aaa-image-enhancement
 scipy==1.13.0
     # via image-dehazer
+    # via imagehash
     # via scikit-image
 setuptools==69.5.1
     # via nodeenv
@@ -232,6 +244,7 @@ traitlets==5.14.3
     # via comm
     # via ipykernel
     # via ipython
+    # via ipywidgets
     # via jupyter-client
     # via jupyter-core
     # via matplotlib-inline
@@ -256,3 +269,5 @@ websockets==12.0
     # via uvicorn
 werkzeug==3.0.2
     # via flask
+widgetsnbextension==4.0.10
+    # via ipywidgets
