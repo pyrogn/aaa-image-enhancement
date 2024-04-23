@@ -22,11 +22,6 @@ from pydantic import BaseModel
 
 from aaa_image_enhancement.defects_detection_fns import (
     classical_detectors,
-    is_blurry,
-    is_low_contrast,
-    is_low_light,
-    is_noisy,
-    is_poor_white_balance,
 )
 from aaa_image_enhancement.enhance_image import EnhanceAgentFirst, ImageEnhancer
 from aaa_image_enhancement.enhancement_fns import (
@@ -44,13 +39,6 @@ from aaa_image_enhancement.image_utils import ImageConversions
 
 app = FastAPI()
 
-detectors = {
-    DefectNames.BLUR: is_blurry,
-    DefectNames.NOISY: is_noisy,
-    DefectNames.LOW_LIGHT: is_low_light,
-    DefectNames.LOW_CONTRAST: is_low_contrast,
-    DefectNames.POOR_WHITE_BALANCE: is_poor_white_balance,
-}
 defects_detector = DefectsDetector(classical_detectors)
 
 map_defect_fn = {
@@ -74,7 +62,7 @@ def detect_defects(image: np.ndarray) -> ImageDefects:
 
 
 def enhance_image(image: np.ndarray, defects: ImageDefects) -> np.ndarray:
-    image_enhancer = ImageEnhancer(image, map_defect_fn)
+    image_enhancer = ImageEnhancer(image)
     enhance_agent = EnhanceAgentFirst(image, image_enhancer, defects)
     return enhance_agent.enhance_image()
 

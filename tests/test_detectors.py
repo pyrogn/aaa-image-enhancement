@@ -14,7 +14,7 @@ from aaa_image_enhancement.image_utils import ImageConversions
 
 @pytest.fixture
 def image_path():
-    return glob.glob("./real_estate_images/*.jpg")[0]
+    return glob.glob("./data/real_estate_images/*.jpg")[0]
 
 
 @pytest.fixture

@@ -20,7 +20,7 @@ def is_valid_image(image_path):
 
 
 if __name__ == "__main__":
-    image_paths = glob.glob("./real_estate_images/*.jpg")
+    image_paths = glob.glob("./data/real_estate_images/*.jpg")
     valid_images = []
     invalid_images = []
 

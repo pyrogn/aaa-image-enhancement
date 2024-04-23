@@ -173,6 +173,7 @@ wheels/
 imgs/
 craigslist_images
 .DS_Store
-real_estate_images/
+data/real_estate_images/
 demo/uploads
 **/*.jpg
+data/random_imgs

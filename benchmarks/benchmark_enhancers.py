@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 
 def load_random_images(num_images=10):
-    image_paths = glob.glob("./real_estate_images/*.jpg")
+    image_paths = glob.glob("./data/real_estate_images/*.jpg")
     random_paths = np.random.choice(image_paths, size=num_images, replace=False)
     return [cv2.imread(path) for path in random_paths]
 

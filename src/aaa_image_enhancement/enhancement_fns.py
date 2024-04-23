@@ -6,6 +6,7 @@ import numpy as np
 from cv2.typing import MatLike
 
 from aaa_image_enhancement.exposure_enhancement import enhance_image_exposure
+from aaa_image_enhancement.image_defects_detection import DefectNames
 
 
 def deblur_image(image: np.ndarray, sharpen_strength: int = 9) -> MatLike:
@@ -56,3 +57,14 @@ classical_enhancement_fns = [
     enhance_wb_image,
     enhance_low_light,
 ]
+
+ENHANCEMENT_MAP = {
+    DefectNames.BLUR: deblur_image,
+    DefectNames.NOISY: dehaze_image,
+    DefectNames.POOR_WHITE_BALANCE: enhance_wb_image,
+    DefectNames.LOW_LIGHT: enhance_low_light,
+}
+
+
+def get_enhancement_function(defect: DefectNames):
+    return ENHANCEMENT_MAP.get(defect)
