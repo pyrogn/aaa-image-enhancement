@@ -28,5 +28,70 @@
 - Проверяем тесты `rye test` или `pytest`.
 - Возможно, добавлю тесты, форматирование и линт в `pre-commit`, чтобы делать меньше движений.
 - Если инструмент работает некорректно, можно добавлять точечно `noqa: <code>`, `type: ignore` или добавить исключения в конфиге в `pyproject.toml`.
+- Можно переносить и переименовывать файлы, функции, переменные. Но только через рефакторинг (как F2 в VSCode), чтобы ничего не сломалось.
 - ~~Типизация `mypy ./src`~~
 - More to come...
+
+## Архитектура
+
+Это эксперимент в [mermaid](https://mermaid.js.org/).
+
+### Autonomous
+
+```mermaid
+graph LR
+    Image -->|input| DefectsDetector
+    Image -->|input| Enhancer
+    DefectsDetector -->|returns image defects| Enhancer
+    Enhancer -->|produces enhanced image| EnhancedImage
+```
+
+```mermaid
+graph LR
+    subgraph Service
+        DefectsDetector[Defects Detector]
+        Enhancer[Enhancer]
+    end
+
+    User[User] -->|uploads image| Image[Image]
+    Image -->|input| DefectsDetector
+    DefectsDetector -->|returns image defects| Enhancer
+    Enhancer -->|produces enhanced image| EnhancedImage[Enhanced Image]
+
+    User -->|specifies defect and uploads image| DirectEnhancement[Image & Specific Defect]
+    DirectEnhancement -->|input| Enhancer
+```
+
+### Interactive with User
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant DefectsDetector
+    participant Enhancer
+
+    box Client
+    participant User
+    end 
+
+    box Server
+    participant DefectsDetector
+    participant Enhancer
+    end 
+
+    User ->>+ DefectsDetector: Upload Image
+    DefectsDetector -->>- User: Return Image Defects
+
+    alt User Chooses to Take New Picture
+        User ->> User: Take New Picture
+    else User Chooses to Enhance Image
+        User ->>+ Enhancer: Send Image and Returned Defects
+        Enhancer -->>- User: Return Enhanced Image
+
+        alt User Keeps Enhanced Image
+            User ->> User: Keep Enhanced Image
+        else User Discards Enhanced Image
+            User ->> User: Discard Enhanced Image
+        end
+    end
+```
