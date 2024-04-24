@@ -13,12 +13,13 @@ from aaa_image_enhancement.image_utils import ImageConversions
 
 # можно смело добавлять больше разнообразия в дефекты,
 # так как здесь пока чаще только 1 алгоритм применяется
+# и также они должны быть приближены к реальным дефектам
 class ImageDistortions:
     """Add distortions to clean image and get decent synth data."""
 
     def __init__(self, img):
-        self.img_conv = ImageConversions(img)
-        self.img = self.img_conv.to_numpy()
+        self.img_conv = ImageConversions(img)  # get RGB numpy
+        self.img_np_rgb = self.img_conv.to_numpy()  # convert to cv2
         self.distortion_methods = {
             DefectNames.BLUR: self.blur,
             DefectNames.LOW_LIGHT: self.low_light,
@@ -32,24 +33,29 @@ class ImageDistortions:
         }
         self.applied_distortions = []
 
+    @property
+    def img_np_bgr(self):
+        """In case you need exactly cv2"""
+        return ImageConversions.changeBR(self.img_np_rgb)
+
     def apply_distortions(
         self, distortion_types
     ) -> tuple[np.ndarray, list[DefectNames]]:
         for distortion_type in distortion_types:
             if distortion_type in self.distortion_methods:
-                self.img = self.distortion_methods[distortion_type]()
+                self.img_np_rgb = self.distortion_methods[distortion_type]()
                 self.applied_distortions.append(distortion_type)
             else:
                 raise ValueError(f"Invalid distortion type: {distortion_type}")
-        return self.img, self.applied_distortions
+        return self.img_np_rgb, self.applied_distortions
 
     def noisy(self):
         """Add random Gaussian noise to the image."""
         mean = 0
         var = random.uniform(0.01, 0.05)
         sigma = var**0.5
-        gaussian = np.random.normal(mean, sigma, self.img.shape)
-        noisy_img = self.img + gaussian * 255  # type: ignore
+        gaussian = np.random.normal(mean, sigma, self.img_np_rgb.shape)
+        noisy_img = self.img_np_rgb + gaussian * 255  # type: ignore
         noisy_img = np.clip(noisy_img, 0, 255)
         return noisy_img.astype(np.uint8)
 
@@ -61,7 +67,7 @@ class ImageDistortions:
         if random.random() < 0.5:
             angle = -angle
 
-        im = self.img_conv.numpy_to_pil(self.img)
+        im = self.img_conv.to_pil()
         im = im.rotate(angle)
         return self.img_conv.pil_to_numpy(im)
 
@@ -83,48 +89,49 @@ class ImageDistortions:
 
     def _average_blur(self):
         kernel_size = random.choice([3, 5, 7, 9, 11])
-        return cv2.blur(self.img, (kernel_size, kernel_size))
+        return cv2.blur(self.img_np_rgb, (kernel_size, kernel_size))
 
     def _median_blur(self):
         kernel_size = random.choice([3, 5, 7, 9, 11])
-        return cv2.medianBlur(self.img, kernel_size)
+        return cv2.medianBlur(self.img_np_rgb, kernel_size)
 
     def _bilateral_blur(self):
         diameter = random.choice([5, 7, 9, 11])
         sigma_color = random.uniform(50, 100)
         sigma_space = random.uniform(50, 100)
-        return cv2.bilateralFilter(self.img, diameter, sigma_color, sigma_space)
+        return cv2.bilateralFilter(self.img_np_rgb, diameter, sigma_color, sigma_space)
 
     def _gaussian_blur(self):
         kernel_size = random.choice([7, 9, 11])
-        return cv2.GaussianBlur(self.img, (kernel_size, kernel_size), 0)
+        return cv2.GaussianBlur(self.img_np_rgb, (kernel_size, kernel_size), 0)
 
     def _motion_blur(self):
         kernel_size = random.choice([7, 9, 11])
         kernel_motion_blur = np.zeros((kernel_size, kernel_size))
         kernel_motion_blur[int((kernel_size - 1) / 2), :] = np.ones(kernel_size)
         kernel_motion_blur /= kernel_size
-        return cv2.filter2D(self.img, -1, kernel_motion_blur)
+        return cv2.filter2D(self.img_np_rgb, -1, kernel_motion_blur)
 
     def low_light(self):
-        brightness = random.uniform(0.1, 0.4)
-        return cv2.convertScaleAbs(self.img, alpha=brightness, beta=0)
+        brightness = random.uniform(0.5, 0.8)
+        return cv2.convertScaleAbs(self.img_np_rgb, alpha=brightness, beta=0)
 
     def poor_white_balance(self):
-        r_gain = random.uniform(0.6, 1.4)
-        b_gain = random.uniform(0.6, 1.4)
-        img_copy = self.img.copy()
+        r_gain = random.uniform(0.8, 1.2)
+        b_gain = random.uniform(0.8, 1.2)
+        img_copy = self.img_np_rgb.copy()
+        # colors are oddly specific
         img_copy[:, :, 0] = cv2.multiply(img_copy[:, :, 0], r_gain)  # type: ignore
         img_copy[:, :, 2] = cv2.multiply(img_copy[:, :, 2], b_gain)  # type: ignore
         return img_copy
 
     def haziness(self):
-        A = random.uniform(0.6, 0.9)  # Atmospheric light
-        t = random.uniform(0.2, 0.7)  # Transmission map
+        A = random.uniform(0.8, 0.95)  # Atmospheric light
+        t = random.uniform(0.5, 0.9)  # Transmission map
         hazy_img = cv2.addWeighted(
-            self.img.astype(np.float32),
+            self.img_np_rgb.astype(np.float32),
             t,
-            np.ones_like(self.img, dtype=np.float32) * 255 * A,
+            np.ones_like(self.img_np_rgb, dtype=np.float32) * 255 * A,
             1 - t,
             0,
         )
@@ -132,11 +139,11 @@ class ImageDistortions:
 
     def brightness(self):
         # можно ещё добавить методы, чтобы лучше имитировать различные световые дефекты
-        brightness = random.uniform(1.5, 2.5)
-        return cv2.convertScaleAbs(self.img, alpha=brightness, beta=0)
+        brightness = random.uniform(1.1, 1.5)
+        return cv2.convertScaleAbs(self.img_np_rgb, alpha=brightness, beta=0)
 
     def low_contrast(self):
-        contrast = random.uniform(0.3, 0.7)
+        contrast = random.uniform(0.5, 0.9)
         pil_img = self.img_conv.to_pil()
         enhancer = ImageEnhance.Contrast(pil_img)
         pil_img = enhancer.enhance(contrast)
@@ -144,7 +151,7 @@ class ImageDistortions:
 
     def jpeg_artifacts(self):
         quality = random.randint(5, 40)
-        pil_img = self.img_conv.numpy_to_pil(self.img)
+        pil_img = self.img_conv.to_pil()
         buffer = BytesIO()
         pil_img.save(buffer, format="JPEG", quality=quality)
         buffer.seek(0)

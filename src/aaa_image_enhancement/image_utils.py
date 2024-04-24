@@ -3,13 +3,28 @@ import numpy as np
 from PIL import Image, ImageChops
 
 
-# пересмотреть, так как я часто путаюсь, а нужно применять statismethod или method
-# и надо иметь в виду, что cv2 отличается от np.ndarray только
-# перемещенным 1 и 3 измерением цвета
 class ImageConversions:
-    """Class helper for common format conversions."""
+    """Class helper for common format conversions.
+
+    You can pass numpy RGB or PIL to __init__
+    Or BGR to from_cv2
+
+    Convert image to grayscale using to_grayscale()
+
+    Get result as
+        RGB numpy array using to_numpy()
+        BGR np array using to_cv2()
+        PIL image using to_pil()
+    """
 
     def __init__(self, img):
+        """Init class
+
+        Args:
+            img: pass either numpy RGB or PIL Image.
+        Attributes:
+            img: RGB numpy
+        """
         if isinstance(img, np.ndarray):
             self.img = img
         elif isinstance(img, Image.Image):
@@ -19,11 +34,37 @@ class ImageConversions:
                 "Unsupported image type. Expected numpy.ndarray, PIL.Image, or cv2.Mat."
             )
 
+    @classmethod
+    def from_cv2(cls, img):
+        """Pass BGR numpy array."""
+        return cls(cls.changeBR(img))
+
+    @staticmethod
+    def changeBR(img):
+        return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    def to_numpy(self):
+        """Returns RGB numpy array."""
+        return self.img
+
+    def to_pil(self):
+        return Image.fromarray(self.img)
+
+    def to_cv2(self) -> np.ndarray:
+        if self.img.ndim == 2:
+            return self.img
+        return self.changeBR(self.img)
+
+    @staticmethod
+    def pil_to_numpy(pil_img):
+        return np.array(pil_img)
+
     def to_grayscale(self):
         if len(self.img.shape) == 2:  # already grayscale
             return self.img
         return cv2.cvtColor(self.img, cv2.COLOR_RGB2GRAY)
 
+    # should it belong here or elsewhere?
     def trim(self, fuzz=0):
         """Trim image padding.
 
@@ -39,22 +80,3 @@ class ImageConversions:
         if bbox:
             self.img = self.pil_to_numpy(pil_img.crop(bbox))
         return self
-
-    def to_numpy(self):
-        if self.img.ndim == 2:
-            return self.img
-        return cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
-
-    def to_pil(self):
-        return Image.fromarray(self.to_numpy())
-
-    def to_cv2(self):
-        return cv2.cvtColor(self.to_numpy(), cv2.COLOR_RGB2BGR)
-
-    @staticmethod
-    def pil_to_numpy(pil_img):
-        return np.array(pil_img)
-
-    @staticmethod
-    def numpy_to_pil(np_img):
-        return Image.fromarray(np_img)
