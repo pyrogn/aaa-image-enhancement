@@ -35,6 +35,8 @@ class EnhanceAgent(Protocol):
     def enhance_image(self) -> np.ndarray: ...
 
 
+# maybe we can use img from ImageEnhancer and not duplicate it
+# or review usage of this class again
 class EnhanceAgentFirst:
     """Simple strategy to apply top priority enhancement."""
 

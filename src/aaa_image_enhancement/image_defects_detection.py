@@ -6,22 +6,6 @@ from aaa_image_enhancement.image_utils import ImageConversions
 
 
 # описание, примеры и кандидаты на добавление находятся в гугл доке
-@dataclass
-class ImageDefects:
-    """Image features for defect detection."""
-
-    blur: bool = False
-    low_light: bool = False
-    low_contrast: bool = False
-    poor_white_balance: bool = False
-    noisy: bool = False
-    hazy: bool = False
-    jpeg_artifacts: bool = False
-    glaring: bool = False
-    rotation: bool = False
-
-
-# add test to match enum value to key in dataclass?
 class DefectNames(Enum):
     """Defect Enums to use in assignment and indexing.
 
@@ -37,6 +21,24 @@ class DefectNames(Enum):
     JPEG_ARTIFACTS = "jpeg_artifacts"
     GLARING = "glaring"
     ROTATION = "rotation"
+
+
+@dataclass
+class ImageDefects:
+    """Image features for defect detection.
+
+    It is used for passing information from detector to enhancer.
+    """
+
+    def __init__(self, **kwargs: dict[str, bool]) -> None:
+        """Setup all defects. Default is False."""
+        for defect in DefectNames:
+            setattr(self, defect.value, kwargs.get(defect.value, False))
+
+    def __repr__(self) -> str:
+        return (
+            f"ImageDefects({', '.join(f'{k}={v}' for k, v in self.__dict__.items())})"
+        )
 
 
 # Почитать про протокол

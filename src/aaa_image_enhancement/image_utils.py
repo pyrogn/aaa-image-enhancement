@@ -7,7 +7,7 @@ class ImageConversions:
     """Class helper for common format conversions.
 
     You can pass numpy RGB or PIL to __init__
-    Or BGR to from_cv2
+    Or BGR to from_cv2() classmethod
 
     Convert image to grayscale using to_grayscale()
 
