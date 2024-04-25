@@ -49,8 +49,7 @@ def detect_defects(image: np.ndarray) -> ImageDefects:
 
 
 def enhance_image(image: np.ndarray, defects: ImageDefects) -> np.ndarray:
-    image_enhancer = ImageEnhancer(image)
-    enhance_agent = EnhanceAgentFirst(image, image_enhancer, defects)
+    enhance_agent = EnhanceAgentFirst(image, defects)
     return enhance_agent.enhance_image()
 
 
@@ -70,6 +69,8 @@ async def detect_problems_route(image: UploadFile = File(...)):
     return {"problems": problems}
 
 
+# если не найдено дефекта, полезно отправлять текстом такое сообщение
+# чтобы лишний раз не передавать картинку
 @app.post("/enhance_image")
 async def enhance_image_route(image: UploadFile = File(...)):
     """Given image it enhances image without user interaction."""

@@ -46,7 +46,7 @@ def upload_image():
         image_enhancer = ImageEnhancer(img)
 
         if selected_defect == "auto":
-            enhance_agent = EnhanceAgentFirst(img, image_enhancer, defects)
+            enhance_agent = EnhanceAgentFirst(img, defects)
             enhanced_img = enhance_agent.enhance_image()
         else:
             assert selected_defect
