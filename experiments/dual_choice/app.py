@@ -1,10 +1,11 @@
+import glob
+import os
+import random
+
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-import glob
-import random
-import os
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 # Mount the 'data' directory as a static directory
 app = FastAPI()
