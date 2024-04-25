@@ -61,13 +61,13 @@ def test_image_fix_defect(test_image):
 
 
 def test_enhance_agent_first_no_defects(test_image, defects_all_false, image_enhancer):
-    agent = EnhanceAgentFirst(test_image, image_enhancer, defects_all_false)
+    agent = EnhanceAgentFirst(test_image, defects_all_false)
     enhanced_image = agent.enhance_image()
     assert np.array_equal(enhanced_image, test_image)
 
 
 def test_enhance_agent_first_with_defect(test_image, defects_with_blur, image_enhancer):
-    agent = EnhanceAgentFirst(test_image, image_enhancer, defects_with_blur)
+    agent = EnhanceAgentFirst(test_image, defects_with_blur)
     enhanced_image = agent.enhance_image()
     assert isinstance(enhanced_image, np.ndarray)
     assert enhanced_image.shape == test_image.shape

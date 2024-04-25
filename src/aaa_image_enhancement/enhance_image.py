@@ -29,28 +29,40 @@ class ImageEnhancer:
 class EnhanceAgent(Protocol):
     """Autonomous agent to apply image enhancements using some rule."""
 
-    def __init__(
-        self, img: np.ndarray, image_enhancer: ImageEnhancer, defects: ImageDefects
-    ) -> None: ...
+    def __init__(self, img: np.ndarray, defects: ImageDefects) -> None: ...
     def enhance_image(self) -> np.ndarray: ...
 
 
-# maybe we can use img from ImageEnhancer and not duplicate it
-# or review usage of this class again
 class EnhanceAgentFirst:
     """Simple strategy to apply top priority enhancement."""
 
-    def __init__(
-        self, img: np.ndarray, image_enhancer: ImageEnhancer, defects: ImageDefects
-    ) -> None:
+    def __init__(self, img: np.ndarray, defects: ImageDefects) -> None:
+        """Pass image and ImageDefects."""
         self.defects = defects
         self.img = img
-        self.image_enhancer = image_enhancer
         self.priority_defects = list(ENHANCEMENT_MAP.keys())
 
     def enhance_image(self) -> np.ndarray:
+        """Get enhanced image if there is a defect to fix. Or get the same image."""
         for defect in self.priority_defects:
             if self.defects.__dict__[defect.value]:
-                enhanced_img = self.image_enhancer.fix_defect(defect)
+                enhanced_img = ImageEnhancer(self.img).fix_defect(defect)
                 return np.array(enhanced_img)
+        return self.img
+
+
+class EnhanceAgentMax:
+    """Simple strategy to apply all enhancements."""
+
+    def __init__(self, img: np.ndarray, defects: ImageDefects) -> None:
+        """Pass image and ImageDefects."""
+        self.defects = defects
+        self.img = img
+        self.priority_defects = list(ENHANCEMENT_MAP.keys())
+
+    def enhance_image(self) -> np.ndarray:
+        """Get enhanced image if there is a defect to fix. Or get the same image."""
+        for defect in self.priority_defects:
+            if self.defects.__dict__[defect.value]:
+                self.img = ImageEnhancer(self.img).fix_defect(defect)
         return self.img

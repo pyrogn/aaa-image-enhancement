@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable
 
@@ -30,8 +30,8 @@ class ImageDefects:
     It is used for passing information from detector to enhancer.
     """
 
-    def __init__(self, **kwargs: dict[str, bool]) -> None:
-        """Setup all defects. Default is False."""
+    def __init__(self, **kwargs: bool) -> None:
+        """Setup all defects. Default is False for every type in Enum."""
         for defect in DefectNames:
             setattr(self, defect.value, kwargs.get(defect.value, False))
 
