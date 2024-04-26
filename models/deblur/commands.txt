@@ -1,0 +1,4 @@
+docker build -t=deblur:0.0.1 . 
+docker run --rm -p 8080:8080 deblur:0.0.1 
+curl http://localhost:8080/ping # health check
+curl -X POST http://localhost:8080/predictions/my_model -T ./im.jpeg | base64 -d > output.jpg # pass real image
