@@ -4,15 +4,14 @@
 # надо эффективно масштабировать, то есть обрабатывать батчами
 # будет полезно использовать https://pytorch.org/serve/
 
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from pydantic import BaseModel
-import torch
-from torch import nn
-import uvicorn
-from typing import List
 import threading
 import time
 from queue import Queue
+
+import torch
+import uvicorn
+from fastapi import FastAPI, File, UploadFile
+from torch import nn
 
 app = FastAPI()
 
@@ -48,13 +47,13 @@ def batch_processor():
                     timeout=batch_timeout - (time.time() - start_time)
                 )
                 batch.append(image)
-            except:
+            except:  # noqa: E722
                 break  # Timeout reached with a partial batch
 
         if batch:
             input_tensor = torch.stack(batch)
             with torch.no_grad():
-                prediction = model(input_tensor)
+                prediction = model(input_tensor)  # noqa: F841
             print("Processed a batch of size:", len(batch))
 
 

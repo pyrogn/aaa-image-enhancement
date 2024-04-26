@@ -18,6 +18,7 @@ RUN python setup.py develop --no_cuda_ext
 
 RUN pip install torchserve torch-model-archiver
 
+# I ran it from current folder
 COPY . .
 
 RUN torch-model-archiver --model-name deblur \
