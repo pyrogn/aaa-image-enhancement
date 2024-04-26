@@ -52,7 +52,7 @@ class ImageDistortions:
     def noisy(self):
         """Add random Gaussian noise to the image."""
         mean = 0
-        var = random.uniform(0.01, 0.05)
+        var = random.uniform(0.01, 0.02)
         sigma = var**0.5
         gaussian = np.random.normal(mean, sigma, self.img_np_rgb.shape)
         noisy_img = self.img_np_rgb + gaussian * 255  # type: ignore
@@ -61,7 +61,7 @@ class ImageDistortions:
 
     def rotation(self):
         # если использовать, то надо научиться делать кроп,
-        # чтобы не обучиться на черный цвет
+        # чтобы не обучиться на черный цвет (так и происходит)
         # можно зеркалить, но это тоже несет риски
         angle = random.uniform(20, 50)
         if random.random() < 0.5:
@@ -75,6 +75,7 @@ class ImageDistortions:
         blur_type = random.choice(
             ["gaussian", "motion", "average", "median", "bilateral"]
         )
+        blur_type = "bilateral"
         if blur_type == "gaussian":
             img = self._gaussian_blur()
         elif blur_type == "motion":
@@ -96,6 +97,8 @@ class ImageDistortions:
         return cv2.medianBlur(self.img_np_rgb, kernel_size)
 
     def _bilateral_blur(self):
+        # самый странный фильтр. Он оставляет только линии и края,
+        # остальной шум сглаживает.
         diameter = random.choice([5, 7, 9, 11])
         sigma_color = random.uniform(50, 100)
         sigma_space = random.uniform(50, 100)
@@ -110,22 +113,56 @@ class ImageDistortions:
         kernel_motion_blur = np.zeros((kernel_size, kernel_size))
         kernel_motion_blur[int((kernel_size - 1) / 2), :] = np.ones(kernel_size)
         kernel_motion_blur /= kernel_size
+
+        # Random angle for motion blur
+        angle = random.randint(0, 360)
+        rotation_matrix = cv2.getRotationMatrix2D(
+            (kernel_size / 2, kernel_size / 2), angle, 1
+        )
+        kernel_motion_blur = cv2.warpAffine(
+            kernel_motion_blur, rotation_matrix, (kernel_size, kernel_size)
+        )
+
         return cv2.filter2D(self.img_np_rgb, -1, kernel_motion_blur)
 
     def low_light(self):
-        brightness = random.uniform(0.5, 0.8)
-        return cv2.convertScaleAbs(self.img_np_rgb, alpha=brightness, beta=0)
+        # Gently reduce the brightness
+        brightness = random.uniform(0.5, 0.9)
+        dimmed_img = cv2.convertScaleAbs(self.img_np_rgb, alpha=brightness, beta=0)
+
+        # # Slightly adjust the contrast
+        # contrast = random.uniform(0.8, 1.0)
+        # dimmed_img = cv2.convertScaleAbs(dimmed_img, alpha=contrast, beta=0)
+
+        # Apply a subtle color shift to simulate the color temperature of low light
+        # Typically, low light can cause a cooler look (bluish tint)
+        b_gain = random.uniform(0.95, 1.05)  # Slight blue gain
+        g_gain = random.uniform(0.95, 1.05)  # Slight green gain
+        r_gain = random.uniform(0.90, 1.00)  # Slightly less red gain
+
+        # Apply color gains
+        dimmed_img[:, :, 0] = cv2.multiply(dimmed_img[:, :, 0], b_gain)  # type: ignore
+        dimmed_img[:, :, 1] = cv2.multiply(dimmed_img[:, :, 1], g_gain)  # type: ignore
+        dimmed_img[:, :, 2] = cv2.multiply(dimmed_img[:, :, 2], r_gain)  # type: ignore
+
+        return dimmed_img
 
     def poor_white_balance(self):
+        # Random gains for red, green, and blue channels
         r_gain = random.uniform(0.8, 1.2)
+        g_gain = random.uniform(0.8, 1.2)
         b_gain = random.uniform(0.8, 1.2)
         img_copy = self.img_np_rgb.copy()
-        # colors are oddly specific
-        img_copy[:, :, 0] = cv2.multiply(img_copy[:, :, 0], r_gain)  # type: ignore
-        img_copy[:, :, 2] = cv2.multiply(img_copy[:, :, 2], b_gain)  # type: ignore
+
+        # Apply gains to each channel
+        img_copy[:, :, 0] = cv2.multiply(img_copy[:, :, 0], b_gain)  # type: ignore
+        img_copy[:, :, 1] = cv2.multiply(img_copy[:, :, 1], g_gain)  # type: ignore
+        img_copy[:, :, 2] = cv2.multiply(img_copy[:, :, 2], r_gain)  # type: ignore
+
         return img_copy
 
     def haziness(self):
+        # очень похоже на низкую контрастность
         A = random.uniform(0.8, 0.95)  # Atmospheric light
         t = random.uniform(0.5, 0.9)  # Transmission map
         hazy_img = cv2.addWeighted(
@@ -137,12 +174,42 @@ class ImageDistortions:
         )
         return hazy_img.astype(np.uint8)
 
-    def brightness(self):
-        # можно ещё добавить методы, чтобы лучше имитировать различные световые дефекты
-        brightness = random.uniform(1.1, 1.5)
+    def _apply_brightness(self):
+        brightness = random.uniform(1.2, 1.5)
         return cv2.convertScaleAbs(self.img_np_rgb, alpha=brightness, beta=0)
 
+    def _apply_overexposure(self):
+        # looks like haze
+        # Increase the brightness of the entire image to simulate overexposure
+        overexposed_img = cv2.convertScaleAbs(
+            self.img_np_rgb, alpha=1.0, beta=50
+        )  # Increase beta to make the image brighter
+        return overexposed_img
+
+    def _apply_bloom(self):
+        gray = cv2.cvtColor(self.img_np_rgb, cv2.COLOR_BGR2GRAY)
+        _, bright_areas = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
+
+        bright_mask = cv2.cvtColor(bright_areas, cv2.COLOR_GRAY2BGR)
+        increased_brightness = cv2.addWeighted(
+            self.img_np_rgb, 1.5, bright_mask, 0.5, 0
+        )
+        return increased_brightness
+
+    def brightness(self):
+        chosen_fn = random.choice(
+            [
+                self._apply_brightness,
+                self._apply_bloom,
+                self._apply_overexposure,
+            ]
+        )
+        # chosen_fn = self.apply_overexposure
+        # print(chosen_fn)
+        return chosen_fn()
+
     def low_contrast(self):
+        # очень похоже на дымку
         contrast = random.uniform(0.5, 0.9)
         pil_img = self.img_conv.to_pil()
         enhancer = ImageEnhance.Contrast(pil_img)
@@ -150,7 +217,7 @@ class ImageDistortions:
         return self.img_conv.pil_to_numpy(pil_img)
 
     def jpeg_artifacts(self):
-        quality = random.randint(5, 40)
+        quality = random.randint(5, 50)
         pil_img = self.img_conv.to_pil()
         buffer = BytesIO()
         pil_img.save(buffer, format="JPEG", quality=quality)

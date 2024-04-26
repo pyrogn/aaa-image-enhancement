@@ -173,3 +173,6 @@ wheels/
 .DS_Store
 **/*.jpg
 **/*.jpeg
+**/*.pth
+**/*.pt
+**/*.mar
