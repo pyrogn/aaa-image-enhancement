@@ -35,7 +35,7 @@ def test_detectors(test_image, detector):
     for defect, is_detected in result.items():
         assert isinstance(defect, DefectNames)
         # should we allow np.bool_ or simple bool?
-        assert isinstance(is_detected, (bool, np.bool_))
+        assert isinstance(is_detected, bool | np.bool_)
 
 
 def test_class_detector(test_image):
@@ -44,4 +44,4 @@ def test_class_detector(test_image):
     assert isinstance(result, ImageDefects)
     for k, v in result.__dict__.items():
         assert isinstance(k, str)
-        assert isinstance(v, (bool, np.bool_))
+        assert isinstance(v, bool | np.bool_)

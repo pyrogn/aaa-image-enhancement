@@ -18,7 +18,7 @@ app = FastAPI()
 
 class ImageModel(nn.Module):
     def __init__(self):
-        super(ImageModel, self).__init__()
+        super().__init__()
         # Define your model architecture here
         self.conv1 = nn.Conv2d(3, 16, 3, stride=2, padding=1)
 
