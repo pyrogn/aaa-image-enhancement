@@ -12,7 +12,6 @@ dependencies = [
     "matplotlib>=3.8.4",
     "requests>=2.31.0",
     "image-dehazer>=0.0.9",
-    "pywavelets>=1.6.0",
     "flask>=3.0.3",
     "pydantic>=2.7.0",
     "fastapi>=0.110.2",
@@ -27,7 +26,6 @@ requires-python = ">= 3.8"
 [project.optional-dependencies]
 lint = [
     "ruff>=0.4.1",
-    "black>=24.4.0",
 ]
 code = [
     "pre-commit>=3.7.0",
