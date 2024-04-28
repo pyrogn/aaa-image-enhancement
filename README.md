@@ -24,13 +24,58 @@
 - Не заливаем данные:
   - В jupyter notebook перед отправкой удаляем весь output.
   - Картинки и гифки не оставляем в репо, а заливаем на хранилище GitHub через вставку через веб-интерфейс.
-- Прогоняем код через Ruff и Black (`rye lint --fix`, `rye fmt`, либо `ruff check --fix`, `black .`).
+- Прогоняем код через Ruff (`rye lint --fix`, `rye fmt`, либо `ruff check --fix`, `ruff format`).
 - Проверяем тесты `rye test` или `pytest`.
 - Возможно, добавлю тесты, форматирование и линт в `pre-commit`, чтобы делать меньше движений.
 - Если инструмент работает некорректно, можно добавлять точечно `noqa: <code>`, `type: ignore` или добавить исключения в конфиге в `pyproject.toml`.
 - Можно переносить и переименовывать файлы, функции, переменные. Но только через рефакторинг (как F2 или Refactor... в VSCode), чтобы ничего не сломалось.
 - ~~Типизация `mypy ./src`~~
 - More to come...
+
+## Инфраструктура
+
+- https://pytorch.org/serve/
+
+```mermaid
+flowchart TB
+    subgraph docker1["Docker Container 1"]
+        torchServe1[TorchServe]
+        model1[PyTorch Model 1]
+        torchServe1 --> model1
+    end
+
+    subgraph docker2["Docker Container 2"]
+        torchServe2[TorchServe]
+        model2[PyTorch Model 2]
+        torchServe2 --> model2
+    end
+
+    subgraph docker3["Docker Container 3"]
+        torchServe3[TorchServe]
+        model3[PyTorch Model 3]
+        torchServe3 --> model3
+    end
+
+    subgraph dockermain["Docker Container for Service"]
+        mainModule[Main Module]
+    end
+        mainModule -->|Sends image| docker1
+        mainModule -->|Sends image| docker2
+        mainModule -->|Sends image| docker3
+
+    docker1 -->|Returns new image| mainModule
+    docker2 -->|Returns new image| mainModule
+    docker3 -->|Returns new image| mainModule
+
+    style mainModule fill:#f9f,stroke:#333,stroke-width:2px
+    style docker1 fill:#bbf,stroke:#333,stroke-width:2px
+    style docker2 fill:#bbf,stroke:#333,stroke-width:2px
+    style docker3 fill:#bbf,stroke:#333,stroke-width:2px
+```
+
+## Модели
+
+- model1 (github link, citation)
 
 ## Архитектура
 

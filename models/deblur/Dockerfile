@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 
 ARG GIT_REPO_URL=https://github.com/pyrogn/FFTformer
 RUN apt-get update && apt-get install -y git gcc python3-dev openjdk-17-jre-headless libgl1 \
-    && git clone ${GIT_REPO_URL} /usr/src/app \
+    && git clone ${GIT_REPO_URL} --depth 1 /usr/src/app \
     && apt-get remove -y git \
     && apt-get autoremove -y \
     && apt-get clean \
