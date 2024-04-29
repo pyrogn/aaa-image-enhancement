@@ -21,7 +21,7 @@ dependencies = [
     "opencv-python>=4.9.0.80",
 ]
 readme = "README.md"
-requires-python = ">= 3.8"
+requires-python = ">= 3.12"
 
 [project.optional-dependencies]
 lint = [
@@ -34,6 +34,7 @@ code = [
     "ipykernel>=6.29.4",
     "imagehash>=4.3.1",
     "ipywidgets>=8.1.2",
+    "nbconvert>=7.16.3",
 ]
 test = [
     "pytest>=8.1.1",
@@ -56,6 +57,11 @@ ml = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.rye.scripts]
+lint = { chain = ["lint:ruff", "format:ruff" ] }
+"lint:ruff" = "ruff check --fix"
+"format:ruff" = "ruff format"
 
 [tool.rye]
 managed = true
@@ -107,7 +113,23 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
-ignore = []
+# as in https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+ignore = [
+    "W191", # tab-indentation
+    "E111", # indentation-with-invalid-multiple
+    "E114", # indentation-with-invalid-multiple-comment
+    "E117", # over-indented
+    "D206", # indent-with-spaces
+    "D300", # triple-single-quotes
+    "Q000", # bad-quotes-inline-string
+    "Q001", # bad-quotes-multiline-string
+    "Q002", # bad-quotes-docstring
+    "Q003", # avoidable-escaped-quote
+    "COM812", # missing-trailing-comma
+    "COM819", # prohibited-trailing-comma
+    "ISC001", # single-line-implicit-string-concatenation
+    "ISC002", # multi-line-implicit-string-concatenation
+]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

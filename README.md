@@ -20,13 +20,13 @@
 [![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/rye/main/artwork/badge.json)](https://rye-up.com) [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 - Относимся к main ветке осторожно, добавляем коммиты через PR. Работаем в своей ветке.
-- Используем пакетный менеджер [Rye](https://github.com/astral-sh/rye) (`rye sync --all-features`). 
+- Используем пакетный менеджер [Rye](https://github.com/astral-sh/rye) (`rye sync --all-features`).
 - Не заливаем данные:
   - В jupyter notebook перед отправкой удаляем весь output.
   - Картинки и гифки не оставляем в репо, а заливаем на хранилище GitHub через вставку через веб-интерфейс.
-- Прогоняем код через Ruff (`rye lint --fix`, `rye fmt`, либо `ruff check --fix`, `ruff format`).
+- Прогоняем код через Ruff (`rye run lint`, source находится в pyproject). Индивидуально: (`rye lint --fix`, `rye fmt`, либо `ruff check --fix`, `ruff format`).
 - Проверяем тесты `rye test` или `pytest`.
-- Возможно, добавлю тесты, форматирование и линт в `pre-commit`, чтобы делать меньше движений.
+- Все или почти все эти операции можно включить через `pre-commit install`.
 - Если инструмент работает некорректно, можно добавлять точечно `noqa: <code>`, `type: ignore` или добавить исключения в конфиге в `pyproject.toml`.
 - Можно переносить и переименовывать файлы, функции, переменные. Но только через рефакторинг (как F2 или Refactor... в VSCode), чтобы ничего не сломалось.
 - ~~Типизация `mypy ./src`~~
@@ -35,6 +35,12 @@
 ## Инфраструктура
 
 - https://pytorch.org/serve/
+- FastAPI
+- Docker, Docker Compose
+
+
+<details>
+  <summary>Тренировка</summary>
 
 ```mermaid
 flowchart TB
@@ -72,6 +78,9 @@ flowchart TB
     style docker2 fill:#bbf,stroke:#333,stroke-width:2px
     style docker3 fill:#bbf,stroke:#333,stroke-width:2px
 ```
+
+</details>
+
 
 ## Модели
 
@@ -117,12 +126,12 @@ sequenceDiagram
 
     box Client
     participant User
-    end 
+    end
 
     box Server
     participant DefectsDetector
     participant Enhancer
-    end 
+    end
 
     User ->>+ DefectsDetector: Upload Image
     DefectsDetector -->>- User: Return Image Defects

@@ -26,8 +26,8 @@ WORKDIR /usr/src/app/IAT_enhance
 RUN torch-model-archiver --model-name lowlight \
     --version 1.0 \
     --model-file model/IAT.py \
-    --serialized-file best_Epoch_exposure.pth \ 
-    --handler model-handler.py 
+    --serialized-file best_Epoch_exposure.pth \
+    --handler model-handler.py
 
 RUN mkdir /usr/src/app/model_store
 RUN mv lowlight.mar /usr/src/app/model_store

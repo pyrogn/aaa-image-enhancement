@@ -1,0 +1,27 @@
+# start from dockerfiles, they are probably not optimal
+# not tested, need to add network, make sense of ports, volumes
+# version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - deblur
+      - low-light
+
+  deblur:
+    build: ./models/deblur
+    ports:
+      - "8001:8080"
+    volumes:
+      - ./models/deblur:/usr/src/app
+
+  low-light:
+    build: ./models/low-light
+    ports:
+      - "8002:8080"
+    volumes:
+      - ./models/low-light:/usr/src/app
