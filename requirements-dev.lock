@@ -18,8 +18,14 @@ appnope==0.1.4
     # via ipykernel
 asttokens==2.4.1
     # via stack-data
+attrs==23.2.0
+    # via jsonschema
+    # via referencing
 beautifulsoup4==4.12.3
     # via aaa-image-enhancement
+    # via nbconvert
+bleach==6.1.0
+    # via nbconvert
 blinker==1.7.0
     # via flask
 certifi==2024.2.2
@@ -44,12 +50,16 @@ debugpy==1.8.1
     # via ipykernel
 decorator==5.1.1
     # via ipython
+defusedxml==0.7.1
+    # via nbconvert
 distlib==0.3.8
     # via virtualenv
 executing==2.0.1
     # via stack-data
 fastapi==0.110.2
     # via aaa-image-enhancement
+fastjsonschema==2.19.1
+    # via nbformat
 filelock==3.13.4
     # via torch
     # via virtualenv
@@ -95,14 +105,25 @@ jedi==0.19.1
     # via ipython
 jinja2==3.1.3
     # via flask
+    # via nbconvert
     # via torch
 joblib==1.4.0
     # via scikit-learn
+jsonschema==4.21.1
+    # via nbformat
+jsonschema-specifications==2023.12.1
+    # via jsonschema
 jupyter-client==8.6.1
     # via ipykernel
+    # via nbclient
 jupyter-core==5.7.2
     # via ipykernel
     # via jupyter-client
+    # via nbclient
+    # via nbconvert
+    # via nbformat
+jupyterlab-pygments==0.3.0
+    # via nbconvert
 jupyterlab-widgets==3.0.10
     # via ipywidgets
 kiwisolver==1.4.5
@@ -111,18 +132,28 @@ lazy-loader==0.4
     # via scikit-image
 markupsafe==2.1.5
     # via jinja2
+    # via nbconvert
     # via werkzeug
 matplotlib==3.8.4
     # via aaa-image-enhancement
 matplotlib-inline==0.1.7
     # via ipykernel
     # via ipython
+mistune==3.0.2
+    # via nbconvert
 mpmath==1.3.0
     # via sympy
 mypy==1.10.0
     # via aaa-image-enhancement
 mypy-extensions==1.0.0
     # via mypy
+nbclient==0.10.0
+    # via nbconvert
+nbconvert==7.16.3
+    # via aaa-image-enhancement
+nbformat==5.10.4
+    # via nbclient
+    # via nbconvert
 nest-asyncio==1.6.0
     # via ipykernel
 networkx==3.3
@@ -154,8 +185,11 @@ packaging==24.0
     # via ipykernel
     # via lazy-loader
     # via matplotlib
+    # via nbconvert
     # via pytest
     # via scikit-image
+pandocfilters==1.5.1
+    # via nbconvert
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
@@ -190,6 +224,7 @@ pydantic-core==2.18.2
     # via pydantic
 pygments==2.17.2
     # via ipython
+    # via nbconvert
 pyparsing==3.1.2
     # via matplotlib
 pytest==8.1.2
@@ -212,8 +247,14 @@ pyyaml==6.0.1
 pyzmq==26.0.2
     # via ipykernel
     # via jupyter-client
+referencing==0.35.0
+    # via jsonschema
+    # via jsonschema-specifications
 requests==2.31.0
     # via aaa-image-enhancement
+rpds-py==0.18.0
+    # via jsonschema
+    # via referencing
 ruff==0.4.2
     # via aaa-image-enhancement
 scikit-image==0.23.2
@@ -229,6 +270,7 @@ setuptools==69.5.1
     # via nodeenv
 six==1.16.0
     # via asttokens
+    # via bleach
     # via python-dateutil
 sniffio==1.3.1
     # via anyio
@@ -245,6 +287,8 @@ threadpoolctl==3.4.0
     # via scikit-learn
 tifffile==2024.4.24
     # via scikit-image
+tinycss2==1.3.0
+    # via nbconvert
 torch==2.3.0
     # via aaa-image-enhancement
     # via torchvision
@@ -263,6 +307,9 @@ traitlets==5.14.3
     # via jupyter-client
     # via jupyter-core
     # via matplotlib-inline
+    # via nbclient
+    # via nbconvert
+    # via nbformat
 typing-extensions==4.11.0
     # via fastapi
     # via mypy
@@ -281,6 +328,9 @@ watchfiles==0.21.0
     # via uvicorn
 wcwidth==0.2.13
     # via prompt-toolkit
+webencodings==0.5.1
+    # via bleach
+    # via tinycss2
 websockets==12.0
     # via uvicorn
 werkzeug==3.0.2

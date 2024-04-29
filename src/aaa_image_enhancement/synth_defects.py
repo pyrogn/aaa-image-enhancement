@@ -75,7 +75,7 @@ class ImageDistortions:
         blur_type = random.choice(
             ["gaussian", "motion", "average", "median", "bilateral"]
         )
-        blur_type = "bilateral"
+        # blur_type = "bilateral"
         if blur_type == "gaussian":
             img = self._gaussian_blur()
         elif blur_type == "motion":

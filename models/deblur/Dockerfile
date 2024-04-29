@@ -25,7 +25,7 @@ RUN torch-model-archiver --model-name deblur \
     --version 1.0 \
     --model-file basicsr/models/archs/fftformer_only.py \
     --serialized-file weights/net_g_Realblur_J.pth \
-    --handler fftformer_handler.py 
+    --handler fftformer_handler.py
 
 RUN mkdir /usr/src/app/model_store
 RUN mv deblur.mar /usr/src/app/model_store
