@@ -1,4 +1,18 @@
 repos:
+# add files or folders to exclude if needed
+-   repo: local
+    hooks:
+    -   id: clean-ipynb-output
+        name: Clean Jupyter Notebook Output
+        entry: rye run jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace
+        language: system
+        files: \.ipynb$
+        # exclude: |
+        #     (?x)^(
+        #         folder1/|
+        #         folder2/|
+        #         .*_special\.ipynb
+        #     )
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
@@ -32,22 +46,7 @@ repos:
     hooks:
     -   id: pytest
         name: pytest
-        entry: pytest
+        entry: rye run pytest
         language: system
         pass_filenames: false
         always_run: true
-
-# add files or folders to exclude if needed
--   repo: local
-    hooks:
-    -   id: clean-ipynb-output
-        name: Clean Jupyter Notebook Output
-        entry: jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace
-        language: system
-        files: \.ipynb$
-        # exclude: |
-        #     (?x)^(
-        #         folder1/|
-        #         folder2/|
-        #         .*_special\.ipynb
-        #     )
