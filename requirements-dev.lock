@@ -32,12 +32,11 @@ certifi==2024.2.2
     # via httpcore
     # via httpx
     # via requests
-cfgv==3.4.0
-    # via pre-commit
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via flask
+    # via ocrmac
     # via uvicorn
 comm==0.2.2
     # via ipykernel
@@ -52,8 +51,8 @@ decorator==5.1.1
     # via ipython
 defusedxml==0.7.1
     # via nbconvert
-distlib==0.3.8
-    # via virtualenv
+dill==0.3.8
+    # via multiprocess
 executing==2.0.1
     # via stack-data
 fastapi==0.110.2
@@ -62,7 +61,6 @@ fastjsonschema==2.19.1
     # via nbformat
 filelock==3.13.4
     # via torch
-    # via virtualenv
 flask==3.0.3
     # via aaa-image-enhancement
 fonttools==4.51.0
@@ -78,8 +76,6 @@ httptools==0.6.1
     # via uvicorn
 httpx==0.27.0
     # via aaa-image-enhancement
-identify==2.5.36
-    # via pre-commit
 idna==3.7
     # via anyio
     # via httpx
@@ -143,6 +139,8 @@ mistune==3.0.2
     # via nbconvert
 mpmath==1.3.0
     # via sympy
+multiprocess==0.70.16
+    # via aaa-image-enhancement
 mypy==1.10.0
     # via aaa-image-enhancement
 mypy-extensions==1.0.0
@@ -159,8 +157,6 @@ nest-asyncio==1.6.0
 networkx==3.3
     # via scikit-image
     # via torch
-nodeenv==1.8.0
-    # via pre-commit
 numpy==1.26.4
     # via aaa-image-enhancement
     # via contourpy
@@ -170,12 +166,15 @@ numpy==1.26.4
     # via matplotlib
     # via opencv-contrib-python
     # via opencv-python
+    # via pandas
     # via pywavelets
     # via scikit-image
     # via scikit-learn
     # via scipy
     # via tifffile
     # via torchvision
+ocrmac==0.1.6
+    # via aaa-image-enhancement
 opencv-contrib-python==4.9.0.80
     # via aaa-image-enhancement
 opencv-python==4.9.0.80
@@ -188,6 +187,8 @@ packaging==24.0
     # via nbconvert
     # via pytest
     # via scikit-image
+pandas==2.2.2
+    # via aaa-image-enhancement
 pandocfilters==1.5.1
     # via nbconvert
 parso==0.8.4
@@ -198,17 +199,15 @@ pillow==10.3.0
     # via imagehash
     # via imageio
     # via matplotlib
+    # via ocrmac
     # via scikit-image
     # via torchvision
 pip==24.0
     # via aaa-image-enhancement
 platformdirs==4.2.1
     # via jupyter-core
-    # via virtualenv
 pluggy==1.5.0
     # via pytest
-pre-commit==3.7.0
-    # via aaa-image-enhancement
 prompt-toolkit==3.0.43
     # via ipython
 psutil==5.9.8
@@ -225,6 +224,21 @@ pydantic-core==2.18.2
 pygments==2.17.2
     # via ipython
     # via nbconvert
+pyobjc-core==10.2
+    # via pyobjc-framework-cocoa
+    # via pyobjc-framework-coreml
+    # via pyobjc-framework-quartz
+    # via pyobjc-framework-vision
+pyobjc-framework-cocoa==10.2
+    # via pyobjc-framework-coreml
+    # via pyobjc-framework-quartz
+    # via pyobjc-framework-vision
+pyobjc-framework-coreml==10.2
+    # via pyobjc-framework-vision
+pyobjc-framework-quartz==10.2
+    # via pyobjc-framework-vision
+pyobjc-framework-vision==10.2
+    # via ocrmac
 pyparsing==3.1.2
     # via matplotlib
 pytest==8.1.2
@@ -235,14 +249,16 @@ pytest-asyncio==0.23.6
 python-dateutil==2.9.0.post0
     # via jupyter-client
     # via matplotlib
+    # via pandas
 python-dotenv==1.0.1
     # via uvicorn
 python-multipart==0.0.9
     # via aaa-image-enhancement
+pytz==2024.1
+    # via pandas
 pywavelets==1.6.0
     # via imagehash
 pyyaml==6.0.1
-    # via pre-commit
     # via uvicorn
 pyzmq==26.0.2
     # via ipykernel
@@ -266,8 +282,6 @@ scipy==1.13.0
     # via imagehash
     # via scikit-image
     # via scikit-learn
-setuptools==69.5.1
-    # via nodeenv
 six==1.16.0
     # via asttokens
     # via bleach
@@ -316,14 +330,14 @@ typing-extensions==4.11.0
     # via pydantic
     # via pydantic-core
     # via torch
+tzdata==2024.1
+    # via pandas
 urllib3==2.2.1
     # via requests
 uvicorn==0.29.0
     # via aaa-image-enhancement
 uvloop==0.19.0
     # via uvicorn
-virtualenv==20.26.0
-    # via pre-commit
 watchfiles==0.21.0
     # via uvicorn
 wcwidth==0.2.13
