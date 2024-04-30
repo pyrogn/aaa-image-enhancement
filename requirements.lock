@@ -32,6 +32,8 @@ certifi==2024.2.2
     # via httpcore
     # via httpx
     # via requests
+cfgv==3.4.0
+    # via pre-commit
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
@@ -53,6 +55,8 @@ defusedxml==0.7.1
     # via nbconvert
 dill==0.3.8
     # via multiprocess
+distlib==0.3.8
+    # via virtualenv
 executing==2.0.1
     # via stack-data
 fastapi==0.110.2
@@ -61,6 +65,7 @@ fastjsonschema==2.19.1
     # via nbformat
 filelock==3.13.4
     # via torch
+    # via virtualenv
 flask==3.0.3
     # via aaa-image-enhancement
 fonttools==4.51.0
@@ -76,6 +81,8 @@ httptools==0.6.1
     # via uvicorn
 httpx==0.27.0
     # via aaa-image-enhancement
+identify==2.5.36
+    # via pre-commit
 idna==3.7
     # via anyio
     # via httpx
@@ -157,6 +164,8 @@ nest-asyncio==1.6.0
 networkx==3.3
     # via scikit-image
     # via torch
+nodeenv==1.8.0
+    # via pre-commit
 numpy==1.26.4
     # via aaa-image-enhancement
     # via contourpy
@@ -206,8 +215,11 @@ pip==24.0
     # via aaa-image-enhancement
 platformdirs==4.2.1
     # via jupyter-core
+    # via virtualenv
 pluggy==1.5.0
     # via pytest
+pre-commit==3.7.0
+    # via aaa-image-enhancement
 prompt-toolkit==3.0.43
     # via ipython
 psutil==5.9.8
@@ -259,6 +271,7 @@ pytz==2024.1
 pywavelets==1.6.0
     # via imagehash
 pyyaml==6.0.1
+    # via pre-commit
     # via uvicorn
 pyzmq==26.0.2
     # via ipykernel
@@ -282,6 +295,8 @@ scipy==1.13.0
     # via imagehash
     # via scikit-image
     # via scikit-learn
+setuptools==69.5.1
+    # via nodeenv
 six==1.16.0
     # via asttokens
     # via bleach
@@ -338,6 +353,8 @@ uvicorn==0.29.0
     # via aaa-image-enhancement
 uvloop==0.19.0
     # via uvicorn
+virtualenv==20.26.1
+    # via pre-commit
 watchfiles==0.21.0
     # via uvicorn
 wcwidth==0.2.13
