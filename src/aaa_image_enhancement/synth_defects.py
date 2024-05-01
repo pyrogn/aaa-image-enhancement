@@ -75,6 +75,9 @@ class ImageDistortions:
         blur_type = random.choice(
             ["gaussian", "motion", "average", "median", "bilateral"]
         )
+        # обратить внимание, что bilateral вряд ли можно исправить деблюром
+        # возможно, ещё  другие. После деблюра получится аниме, а не фото.
+
         # blur_type = "bilateral"
         if blur_type == "gaussian":
             img = self._gaussian_blur()

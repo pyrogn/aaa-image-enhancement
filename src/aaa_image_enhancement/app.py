@@ -17,7 +17,7 @@ Routes:
 import cv2
 import numpy as np
 from fastapi import FastAPI, File, Form, Response, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel
 
 from aaa_image_enhancement.defects_detection_fns import (
@@ -69,15 +69,27 @@ async def detect_problems_route(image: UploadFile = File(...)):
     return {"problems": problems}
 
 
-# если не найдено дефекта, полезно отправлять текстом такое сообщение
-# чтобы лишний раз не передавать картинку
 @app.post("/enhance_image")
 async def enhance_image_route(image: UploadFile = File(...)):
-    """Given image it enhances image without user interaction."""
+    """
+    Enhances the image if defects are detected;
+    otherwise, indicates no enhancement needed.
+
+    Parameters:
+    - image (UploadFile): The image file to be processed.
+
+    Responses:
+    - 200 OK: Returns the enhanced image.
+    - 204 No Content: Returns if no enhancement is needed.
+    - 400 Bad Request: Returns if the input data is invalid.
+    """
     contents = await image.read()
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     defects = detect_defects(img)
+    if not defects.has_defects():
+        return PlainTextResponse("No enhancement needed", status_code=204)
+
     enhanced_img = enhance_image(img, defects)
     _, encoded_img = cv2.imencode(".jpg", enhanced_img)
     return Response(content=encoded_img.tobytes(), media_type="image/jpeg")

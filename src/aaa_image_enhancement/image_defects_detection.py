@@ -40,6 +40,10 @@ class ImageDefects:
             f"ImageDefects({', '.join(f'{k}={v}' for k, v in self.__dict__.items())})"
         )
 
+    def has_defects(self) -> bool:
+        """Returns true if found at least one defect."""
+        return any(self.__dict__.values())
+
 
 # Почитать про протокол
 # https://idego-group.com/blog/2023/02/21/we-need-to-talk-about-protocols-in-python/
