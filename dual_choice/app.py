@@ -1,54 +1,67 @@
 """AB testing image enhancements."""
 
-# todo:
-# manage user choices and what's been completed
-# better sql management (less boilerplate)
-# how to read and export data
-# add user id to sql (ip+useragent)
-# fix bug with image id (same one)
-
 # beauty:
 # progress bar
 # fix percentages
 # add extra images for fun
+# add ddos protection (use limits)
 
 import os
 import random
-import sqlite3
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+import psycopg2
+import redis
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
 
-limiter = Limiter(key_func=get_remote_address)
-DATABASE = "selections.db"
+redis_client = redis.Redis(host="localhost", port=6379, db=0)
+
+
+def get_user_pairs(user_id):
+    return redis_client.lrange(user_id, 0, -1)
+
+
+def add_user_pair(user_id, pair):
+    redis_client.rpush(user_id, pair)
+
+
+def remove_user_pair(user_id, pair):
+    redis_client.lrem(user_id, 0, pair)
+
+
+DATABASE_URL = "postgresql://user:password@localhost/database"
 
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(DATABASE_URL)
     return conn
 
 
-def init_db():
+def execute_sql(query, params):
     conn = get_db_connection()
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS image_selections (
-            image_id INTEGER,
-            selected_sub_id INTEGER,
-            non_selected_sub_id INTEGER,
-            selection_count INTEGER DEFAULT 1,
-            PRIMARY KEY (image_id, selected_sub_id, non_selected_sub_id)
-        )
-    """)
+    cursor = conn.cursor()
+    cursor.execute(query, params)
     conn.commit()
     conn.close()
+
+
+def init_db():
+    execute_sql(
+        """
+        CREATE TABLE IF NOT EXISTS image_selections (
+            user_id TEXT,
+            image_id INTEGER,
+            selected_id INTEGER,
+            other_id INTEGER,
+            PRIMARY KEY (user_id, image_id, selected_id, other_id)
+        )
+    """,
+        [],
+    )
 
 
 @asynccontextmanager
@@ -59,8 +72,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
 
 
 # Adjust the templates directory path
@@ -69,31 +80,49 @@ templates = Jinja2Templates(directory="dual_choice/templates")
 # New data directory path
 data_directory = "dual_choice/data"
 
+# Mount the 'data' directory as a static directory
+app.mount("/data", StaticFiles(directory=data_directory), name="data")
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    # List all subdirectories in the data directory
+
+def generate_image_pairs():
+    """Generate image pairs based on data, which will be random each time."""
+    folders = [f.path for f in os.scandir("path/to/data") if f.is_dir()]
+    pairs = []
+    random.shuffle(folders)
+    for folder in folders:
+        images = [os.path.join(folder, img) for img in os.listdir(folder)]
+        if len(images) >= 2:
+            random.shuffle(images)
+            pairs.extend(
+                [
+                    (folder, images[i], images[i + 1])
+                    for i in range(0, len(images) - 1, 2)
+                ]
+            )
+    return pairs
+
+
+def load_new_images(data_directory):
     folders = [f.path for f in os.scandir(data_directory) if f.is_dir()]
     selected_folder = random.choice(folders)
-
-    # List all images in the selected folder
     images = [os.path.join(selected_folder, img) for img in os.listdir(selected_folder)]
-
-    # Randomly select two images without replacement
     selected_images = random.sample(images, 2)
-
-    # Adjust the image paths for web access
     web_accessible_images = [
         img.replace(data_directory, "/data") for img in selected_images
     ]
+    return web_accessible_images
 
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    image_pairs = generate_image_pairs()
+    if not image_pairs:
+        raise HTTPException(status_code=404, detail="No image pairs available")
+    selected_pair = random.choice(image_pairs)
     return templates.TemplateResponse(
-        "index.html", {"request": request, "images": web_accessible_images}
+        "index.html",
+        {"request": request, "images": [selected_pair[1], selected_pair[2]]},
     )
-
-
-# Mount the 'data' directory as a static directory
-app.mount("/data", StaticFiles(directory=data_directory), name="data")
 
 
 class ImageSelection(BaseModel):
@@ -102,24 +131,22 @@ class ImageSelection(BaseModel):
     nonSelectedSubId: int
 
 
-# @app.post("/", dependencies=[Depends(limiter.limit("5/second"))])
 @app.post("/")
 async def save_selection(request: Request, selection: ImageSelection):
-    print(selection)
-    # extract ip and useragent from request
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
+    assert request.client
+    user_id = f"{request.client.host}_{request.headers.get('User-Agent')}"
+    execute_sql(
         """
-        INSERT INTO image_selections (image_id, selected_sub_id, non_selected_sub_id)
-        VALUES (?, ?, ?)
-        ON CONFLICT(image_id, selected_sub_id, non_selected_sub_id)
-        DO UPDATE SET selection_count = selection_count + 1
+        INSERT INTO image_selections (user_id, image_id, selected_id, other_id)
+        VALUES (%s, %s, %s, %s)
     """,
-        (selection.imageId, selection.selectedSubId, selection.nonSelectedSubId),
+        (
+            user_id,
+            selection.imageId,
+            selection.selectedSubId,
+            selection.nonSelectedSubId,
+        ),
     )
-    conn.commit()
-    conn.close()
     return {"message": "Selection saved"}
 
 
@@ -133,24 +160,39 @@ async def get_selection_count(
     cursor = conn.cursor()
     cursor.execute(
         """
-        SELECT selection_count FROM image_selections
-        WHERE image_id = ? AND selected_sub_id = ? AND non_selected_sub_id = ?
+        SELECT
+            SUM(CASE WHEN selected_id = ? AND other_id = ? THEN 1 ELSE 0 END)
+                AS selected_count,
+            COUNT(1) AS total_count
+        FROM image_selections
+        WHERE image_id = ? AND (
+            (selected_id = ? AND other_id = ?) OR
+            (selected_id = ? AND other_id = ?)
+        )
     """,
-        (image_id, selected_sub_id, non_selected_sub_id),
+        (
+            selected_sub_id,
+            non_selected_sub_id,
+            image_id,
+            selected_sub_id,
+            non_selected_sub_id,
+            non_selected_sub_id,
+            selected_sub_id,
+        ),
     )
     row = cursor.fetchone()
+    if row:
+        prop_selected = row["selected_count"] / row["total_count"]  # type: ignore
+    else:
+        prop_selected = 0
     conn.close()
-    return {"count": row["selection_count"] if row else 0}
+    return {"prop_selected": prop_selected}
 
 
 @app.get("/new-images")
 async def get_new_images():
-    # Similar logic to your existing image selection
-    folders = [f.path for f in os.scandir(data_directory) if f.is_dir()]
-    selected_folder = random.choice(folders)
-    images = [os.path.join(selected_folder, img) for img in os.listdir(selected_folder)]
-    selected_images = random.sample(images, 2)
-    web_accessible_images = [
-        img.replace(data_directory, "/data") for img in selected_images
-    ]
-    return {"images": web_accessible_images}
+    image_pairs = generate_image_pairs()
+    if not image_pairs:
+        raise HTTPException(status_code=404, detail="No new images available")
+    selected_pair = random.choice(image_pairs)
+    return {"images": [selected_pair[1], selected_pair[2]]}
