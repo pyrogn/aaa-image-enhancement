@@ -18,7 +18,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-redis_client = redis.Redis(host="localhost", port=6379, db=0)
+redis_client = redis.Redis(host="redis", port=6379, db=0)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def get_user_pairs(user_id):
@@ -31,9 +32,6 @@ def add_user_pair(user_id, pair):
 
 def remove_user_pair(user_id, pair):
     redis_client.lrem(user_id, 0, pair)
-
-
-DATABASE_URL = "postgresql://user:password@localhost/database"
 
 
 def get_db_connection():
@@ -52,14 +50,20 @@ def execute_sql(query, params):
 def init_db():
     execute_sql(
         """
+        drop table if exists image_selections
+        """,
+        [],
+    )
+    execute_sql(
+        """
         CREATE TABLE IF NOT EXISTS image_selections (
             user_id TEXT,
             image_id INTEGER,
             selected_id INTEGER,
             other_id INTEGER,
             PRIMARY KEY (user_id, image_id, selected_id, other_id)
-        )
-    """,
+            )
+        """,
         [],
     )
 
@@ -74,19 +78,17 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-# Adjust the templates directory path
-templates = Jinja2Templates(directory="dual_choice/templates")
+templates = Jinja2Templates(directory="src/dual_choice/templates")
 
-# New data directory path
-data_directory = "dual_choice/data"
+data_directory = "data"
 
 # Mount the 'data' directory as a static directory
 app.mount("/data", StaticFiles(directory=data_directory), name="data")
 
 
-def generate_image_pairs():
+def generate_image_pairs(data_directory):
     """Generate image pairs based on data, which will be random each time."""
-    folders = [f.path for f in os.scandir("path/to/data") if f.is_dir()]
+    folders = [f.path for f in os.scandir(data_directory) if f.is_dir()]
     pairs = []
     random.shuffle(folders)
     for folder in folders:
@@ -99,6 +101,7 @@ def generate_image_pairs():
                     for i in range(0, len(images) - 1, 2)
                 ]
             )
+    print(pairs)
     return pairs
 
 
@@ -115,7 +118,7 @@ def load_new_images(data_directory):
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    image_pairs = generate_image_pairs()
+    image_pairs = generate_image_pairs(data_directory)
     if not image_pairs:
         raise HTTPException(status_code=404, detail="No image pairs available")
     selected_pair = random.choice(image_pairs)
@@ -158,6 +161,7 @@ async def get_selection_count(
 ):
     conn = get_db_connection()
     cursor = conn.cursor()
+    # might want to simplify this?
     cursor.execute(
         """
         SELECT
@@ -191,7 +195,7 @@ async def get_selection_count(
 
 @app.get("/new-images")
 async def get_new_images():
-    image_pairs = generate_image_pairs()
+    image_pairs = generate_image_pairs(data_directory)
     if not image_pairs:
         raise HTTPException(status_code=404, detail="No new images available")
     selected_pair = random.choice(image_pairs)

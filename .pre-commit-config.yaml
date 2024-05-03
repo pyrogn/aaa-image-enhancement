@@ -1,3 +1,4 @@
+exclude: '^dual_choice$'
 repos:
 # add files or folders to exclude if needed
 -   repo: local

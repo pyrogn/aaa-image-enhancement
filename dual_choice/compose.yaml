@@ -12,7 +12,9 @@ services:
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/database
       - REDIS_URL=redis://redis:6379/0
-
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
   db:
     image: postgres
     environment:
