@@ -57,36 +57,75 @@
     <div class="container">
         <div class="row">
             <div class="col text-center">
-                <h1>Select an Image</h1>
-                <button onclick="showOverlay()">Show Info</button>
+                <h1>❤️ Выберите понравившуюся фотографию ❤️</h1>
+                <button onclick="showOverlay()">Подробности</button>
             </div>
         </div>
         <div class="row">
-            <div class="col image-container" data-image="{{ images[0] }}"
-                onclick="imageSelected('{{ images[0] }}', '{{ images[1] }}')">
+            <div class="col image-container" data-image-index="0">
                 <img src="{{ images[0] }}" class="img-fluid" alt="Image 0">
             </div>
-            <div class="col image-container" data-image="{{ images[1] }}"
-                onclick="imageSelected('{{ images[1] }}', '{{ images[0] }}')">
+            <div class="col image-container" data-image-index="1">
                 <img src="{{ images[1] }}" class="img-fluid" alt="Image 1">
             </div>
         </div>
     </div>
     <div class="overlay" id="overlay">
         <div class="overlay-content">
-            <p>Here is some important information you might need!</p>
+            <p>Просто выбирайте понравившуюся фотографию!</p>
+            <p><a href="https://github.com/pyrogn/aaa-image-enhancement">Source Code</a></p>
             <button onclick="closeOverlay()">Close</button>
         </div>
     </div>
     <div class="notification" id="notification"></div>
 
     <script>
+        // need to ask not to spam
+        // this will create latency between calls
+        // but don't forget to validate requests in backend
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(this, args);
+                }, wait);
+            };
+        }
+
+        // show window with info
         function showOverlay() {
             document.getElementById('overlay').style.display = 'flex';
         }
         function closeOverlay() {
             document.getElementById('overlay').style.display = 'none';
         }
+        // update event listeners on change
+        document.addEventListener('DOMContentLoaded', function () {
+            updateImageEventListeners();
+        });
+
+        function updateImageEventListeners() {
+            const imageContainers = document.querySelectorAll('.image-container');
+            imageContainers.forEach(container => {
+                container.removeEventListener('click', handleImageClick); // Remove existing event listener to prevent duplicates
+                container.addEventListener('click', handleImageClick);
+            });
+        }
+        function handleImageClick(event) {
+            const container = event.currentTarget;
+            const imageIndex = container.getAttribute('data-image-index');
+            const selectedImage = container.querySelector('img').src;
+            const nonSelectedImageIndex = imageIndex === "0" ? "1" : "0";
+            const nonSelectedImage = document.querySelector(`.image-container[data-image-index="${nonSelectedImageIndex}"] img`).src;
+
+            console.log("Selected image:", selectedImage);
+            console.log("Non-selected image:", nonSelectedImage);
+
+            // Send the selection to the backend
+            debouncedImageSelected(selectedImage, nonSelectedImage);
+        }
+
         function imageSelected(selectedImagePath, nonSelectedImagePath) {
             console.log("Selected image:", selectedImagePath);
             const selectedImageMatch = selectedImagePath.match(/(\d+)\/(\d+)\.jpg$/);
@@ -123,20 +162,13 @@
             }
         }
 
-        function updateImages() {
-            fetch('/new-images')
-                .then(response => response.json())
-                .then(data => {
-                    const imageContainers = document.querySelectorAll('.image-container img');
-                    const parentContainers = document.querySelectorAll('.image-container');
-
-                    imageContainers[0].src = data.images[0];
-                    imageContainers[1].src = data.images[1];
-
-                    // Update onclick attributes to reflect new images
-                    parentContainers[0].setAttribute('onclick', `imageSelected('${data.images[0]}', '${data.images[1]}')`);
-                    parentContainers[1].setAttribute('onclick', `imageSelected('${data.images[1]}', '${data.images[0]}')`);
-                });
+        function updateImages(newImages) {
+            newImages.forEach((imageSrc, index) => {
+                const container = document.querySelector(`.image-container[data-image-index="${index}"]`);
+                const img = container.querySelector('img');
+                img.src = imageSrc;
+            });
+            updateImageEventListeners(); // Reattach event listeners to the new images
         }
 
         function showNotification(count) {
@@ -171,6 +203,15 @@
         imageContainers.forEach(container => {
             container.addEventListener('click', function () {
                 imageSelected(this.getAttribute('data-image'));
+            });
+        });
+        const debouncedImageSelected = debounce(imageSelected, 300);
+        // Use debounced function for event listeners
+        document.querySelectorAll('.image-container').forEach(container => {
+            container.addEventListener('click', function () {
+                const selectedImagePath = this.getAttribute('data-image');
+                const nonSelectedImagePath = this.getAttribute('data-other-image'); // Ensure you have a way to get the non-selected image path
+                debouncedImageSelected(selectedImagePath, nonSelectedImagePath);
             });
         });
         // function updateProgressBar() {
