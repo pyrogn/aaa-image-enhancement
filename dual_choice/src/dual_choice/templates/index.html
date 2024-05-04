@@ -107,8 +107,16 @@
                     body: JSON.stringify(postData),
                 }).then(response => response.json())
                     .then(data => {
-                        showNotification(data.count);
-                        updateImages(); // Function to fetch and update images
+                        if (data.message === "Duplicate request") {
+                            // Notify user or log
+                            console.log("Duplicate selection detected, fetching new images.");
+                            // Optionally, automatically fetch new images
+                            updateImages();
+                        } else {
+                            // Handle normal response
+                            showNotification(data.count);
+                            updateImages(); // Function to fetch and update images
+                        }
                     });
             } else {
                 console.error("Failed to extract image IDs");
@@ -116,15 +124,18 @@
         }
 
         function updateImages() {
-            fetch('/new-images')  // Assuming you have an endpoint to fetch new images
+            fetch('/new-images')
                 .then(response => response.json())
                 .then(data => {
                     const imageContainers = document.querySelectorAll('.image-container img');
+                    const parentContainers = document.querySelectorAll('.image-container');
+
                     imageContainers[0].src = data.images[0];
                     imageContainers[1].src = data.images[1];
-                    // Reset click handlers with new image paths
-                    imageContainers[0].parentNode.setAttribute('onclick', `imageSelected('${data.images[0]}', '${data.images[1]}')`);
-                    imageContainers[1].parentNode.setAttribute('onclick', `imageSelected('${data.images[1]}', '${data.images[0]}')`);
+
+                    // Update onclick attributes to reflect new images
+                    parentContainers[0].setAttribute('onclick', `imageSelected('${data.images[0]}', '${data.images[1]}')`);
+                    parentContainers[1].setAttribute('onclick', `imageSelected('${data.images[1]}', '${data.images[0]}')`);
                 });
         }
 
