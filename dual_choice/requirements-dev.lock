@@ -28,6 +28,8 @@ bleach==6.1.0
 certifi==2024.2.2
     # via httpcore
     # via httpx
+choix==0.3.5
+    # via dual-choice
 click==8.1.7
     # via typer
     # via uvicorn
@@ -64,6 +66,8 @@ httptools==0.6.1
     # via uvicorn
 httpx==0.27.0
     # via fastapi
+ibis==3.3.0
+    # via dual-choice
 idna==3.7
     # via anyio
     # via email-validator
@@ -122,6 +126,11 @@ nbformat==5.10.4
     # via nbconvert
 nest-asyncio==1.6.0
     # via ipykernel
+numpy==1.26.4
+    # via choix
+    # via dual-choice
+    # via pandas
+    # via scipy
 orjson==3.10.3
     # via fastapi
 packaging==24.0
@@ -129,6 +138,8 @@ packaging==24.0
     # via limits
     # via nbconvert
     # via pytest
+pandas==2.2.2
+    # via dual-choice
 pandocfilters==1.5.1
     # via nbconvert
 parso==0.8.4
@@ -166,10 +177,13 @@ pygments==2.17.2
 pytest==8.2.0
 python-dateutil==2.9.0.post0
     # via jupyter-client
+    # via pandas
 python-dotenv==1.0.1
     # via uvicorn
 python-multipart==0.0.9
     # via fastapi
+pytz==2024.1
+    # via pandas
 pyyaml==6.0.1
     # via uvicorn
 pyzmq==26.0.3
@@ -185,6 +199,8 @@ rich==13.7.1
 rpds-py==0.18.0
     # via jsonschema
     # via referencing
+scipy==1.13.0
+    # via choix
 shellingham==1.5.4
     # via typer
 six==1.16.0
@@ -229,6 +245,8 @@ typing-extensions==4.11.0
     # via pydantic
     # via pydantic-core
     # via typer
+tzdata==2024.1
+    # via pandas
 ujson==5.9.0
     # via fastapi
 uvicorn==0.29.0
