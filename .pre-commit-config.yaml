@@ -7,12 +7,11 @@ repos:
         entry: rye run jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace
         language: system
         files: \.ipynb$
-        # exclude: |
-        #     (?x)^(
-        #         folder1/|
-        #         folder2/|
-        #         .*_special\.ipynb
-        #     )
+        exclude: |
+            (?x)^(
+                notebooks/|
+                .*_out\.ipynb
+            )
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:

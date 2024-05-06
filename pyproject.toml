@@ -69,6 +69,8 @@ lint = { chain = ["lint:ruff", "format:ruff" ] }
 "lint:ruff" = "ruff check --fix"
 "format:ruff" = "ruff format"
 
+pre = "pre-commit run --all-files"
+
 [tool.rye]
 managed = true
 dev-dependencies = []
@@ -110,7 +112,6 @@ exclude = [
     "venv",
     "src/aaa_image_enhancement/exposure_enhancement.py"
 ]
-
 # Same as Black.
 line-length = 88
 indent-width = 4
