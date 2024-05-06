@@ -16,13 +16,25 @@
 - Ермаков Павел @pyrogn
 - Иванов Артем @aert14
 
+## Структура
+
+(обновлять)
+
+- `src/aaa_image_enhancement/` - устанавливаемый Python проект с главным приложением
+- `experiments/` - различный код
+- `notebooks/` - ноутбуки с output, если потребуется для демонстрации
+- `models/` - модели, поднимаемые через `docker`
+- `benchmarks/` - оценка производительности отдельных частей
+- `demo/` - простой сервис для демонстрации работы детекции и исправления
+- **[Dual-Choice](https://github.com/pyrogn/aaa-dual-choice)** - проект с оценкой субъективного качества фото
+
 ## Работа с репозиторием
 [![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/rye/main/artwork/badge.json)](https://rye-up.com) [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 - Относимся к main ветке осторожно, добавляем коммиты через PR. Работаем в своей ветке.
 - Используем пакетный менеджер [Rye](https://github.com/astral-sh/rye) (`rye sync --all-features`).
 - Не заливаем данные:
-  - В jupyter notebook перед отправкой удаляем весь output.
+  - В jupyter notebook перед отправкой удаляем весь output (Папка `notebooks/` добавлена в исключение, там может быть output).
   - Картинки и гифки не оставляем в репо, а заливаем на хранилище GitHub через вставку через веб-интерфейс.
 - Прогоняем код через Ruff (`rye run lint`, source находится в pyproject). Индивидуально: (`rye lint --fix`, `rye fmt`, либо `ruff check --fix`, `ruff format`).
 - Проверяем тесты `rye test` или `pytest`.
