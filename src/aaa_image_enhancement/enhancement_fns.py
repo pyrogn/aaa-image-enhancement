@@ -92,6 +92,17 @@ def enhance_low_light_4(
     return enhanced_image
 
 
+def enhance_low_light_5(
+    image: np.ndarray, brightness: int = 45, contrast: int = 19
+) -> np.ndarray:
+    # adjusting brightness and contrast
+    # works not so great
+    alpha = 1 + contrast / 100.0
+    beta = brightness
+    adjusted_image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
+    return adjusted_image
+
+
 # used for basic testing
 classical_enhancement_fns = [
     deblur_image,
