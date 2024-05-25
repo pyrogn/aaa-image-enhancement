@@ -5,8 +5,8 @@ import image_dehazer
 import numpy as np
 from cv2.typing import MatLike
 
-from aaa_image_enhancement.exposure_enhancement import enhance_image_exposure
-from aaa_image_enhancement.image_defects_detection import DefectNames
+from src.aaa_image_enhancement.exposure_enhancement import enhance_image_exposure
+from src.aaa_image_enhancement.image_defects_detection import DefectNames
 
 
 def deblur_image(image: np.ndarray, sharpen_strength: int = 9) -> MatLike:
@@ -50,23 +50,6 @@ def enhance_low_light(
     return enhance_image_exposure(image, gamma=gamma, lambda_=lambda_)
 
 
-def enhance_low_light_1(image: np.ndarray) -> np.ndarray:
-    ycrcb = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
-    ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0])
-    enhanced_image = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
-    return enhanced_image
-
-
-def enhance_low_light_2(image: np.ndarray) -> np.ndarray:
-    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
-    l, a, b = cv2.split(lab)  # noqa: E741
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    cl = clahe.apply(l)
-    limg = cv2.merge((cl, a, b))
-    enhanced_image = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
-    return enhanced_image
-
-
 def enhance_low_light_3(image: np.ndarray, gamma: float = 1.5) -> np.ndarray:
     invGamma = 1.0 / gamma
     table = np.array(
@@ -74,33 +57,6 @@ def enhance_low_light_3(image: np.ndarray, gamma: float = 1.5) -> np.ndarray:
     ).astype("uint8")
     enhanced_image = cv2.LUT(image, table)
     return enhanced_image
-
-
-def enhance_low_light_4(
-    image: np.ndarray, gamma: float = 1.5, alpha: float = 1.2, beta: int = -10
-) -> np.ndarray:
-    # Gamma correction
-    invGamma = 1.0 / gamma
-    table = np.array(
-        [((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]
-    ).astype("uint8")
-    corrected_image = cv2.LUT(image, table)
-
-    # contrast enhancement (not so visible)
-    enhanced_image = cv2.convertScaleAbs(corrected_image, alpha=alpha, beta=beta)
-
-    return enhanced_image
-
-
-def enhance_low_light_5(
-    image: np.ndarray, brightness: int = 45, contrast: int = 19
-) -> np.ndarray:
-    # adjusting brightness and contrast
-    # works not so great
-    alpha = 1 + contrast / 100.0
-    beta = brightness
-    adjusted_image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
-    return adjusted_image
 
 
 # used for basic testing
