@@ -5,8 +5,8 @@ import image_dehazer
 import numpy as np
 from cv2.typing import MatLike
 
-from src.aaa_image_enhancement.exposure_enhancement import enhance_image_exposure
-from src.aaa_image_enhancement.image_defects_detection import DefectNames
+from aaa_image_enhancement.exposure_enhancement import enhance_image_exposure
+from aaa_image_enhancement.image_defects_detection import DefectNames
 
 
 def deblur_image(image: np.ndarray, sharpen_strength: int = 9) -> MatLike:

@@ -2,7 +2,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 
-from src.aaa_image_enhancement.image_utils import ImageConversions
+from aaa_image_enhancement.image_utils import ImageConversions
 
 
 # описание, примеры и кандидаты на добавление находятся в гугл доке
@@ -21,6 +21,7 @@ class DefectNames(Enum):
     JPEG_ARTIFACTS = "jpeg_artifacts"
     GLARING = "glaring"
     ROTATION = "rotation"
+    # next keys will be deleted
     DARK_LIGHT = "dark_light"
     DARK_HISTOGRAM = "dark_histogram"
     DARK_THRESHOLD = "dark_threshold"

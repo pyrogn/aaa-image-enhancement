@@ -180,3 +180,6 @@ exclude = [
     ".venv",
     "src/aaa_image_enhancement/exposure_enhancement.py",
 ]
+
+[tool.pytest.ini_options]
+addopts = "--ignore=EnhanceIMG/"
