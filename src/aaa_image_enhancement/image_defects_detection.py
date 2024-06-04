@@ -31,6 +31,14 @@ class DefectNames(Enum):
     DARK_V_CHANNEL = "dark_v_channel"
     DARK_BLOCKS = "dark_blocks"
 
+    @classmethod
+    def from_value(cls, value: str):
+        # might be a bit faster
+        for member in cls:
+            if member.value == value:
+                return member
+        raise ValueError(f"No enum member found for value: {value}")
+
 
 @dataclass
 class ImageDefects:

@@ -1,6 +1,3 @@
-# start from dockerfiles, they are probably not optimal
-# not tested, need to add network, make sense of ports, volumes
-# version: '3'
 services:
   main_app:
     build: .
@@ -9,6 +6,8 @@ services:
     depends_on:
       - detector
       - enhancer
+    networks:
+      - app-network
 
   detector:
     build:
@@ -16,6 +15,8 @@ services:
       dockerfile: ./models/detector/Dockerfile
     ports:
       - "8001:8000"
+    networks:
+      - app-network
 
   enhancer:
     build:
@@ -23,3 +24,9 @@ services:
       dockerfile: ./models/enhancer/Dockerfile
     ports:
       - "8002:8000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

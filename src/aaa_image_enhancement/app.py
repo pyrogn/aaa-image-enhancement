@@ -14,11 +14,14 @@ Routes:
     output: image (with specific enhancement)
 """
 
+import logging
+
 import httpx
 from fastapi import FastAPI, File, Form, Response, UploadFile
 from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel
 
+logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 
@@ -37,6 +40,7 @@ async def detect_problems_route(image: UploadFile = File(...)):
         response = await client.post(
             "http://detector:8000/get_defects", files={"image": contents}
         )
+    logging.debug(f"Detect problems response: {response.json()}")
     return response.json()
 
 
@@ -59,15 +63,17 @@ async def enhance_image_route(image: UploadFile = File(...)):
         detect_response = await client.post(
             "http://detector:8000/get_defects", files={"image": contents}
         )
-    defects = detect_response.json()["problems"]
-    if not defects:
-        return PlainTextResponse("No enhancement needed", status_code=204)
+        defects = detect_response.json()
+        logging.debug(f"Defects detected: {defects}")
+        if not defects:
+            return PlainTextResponse("No enhancement needed", status_code=204)
 
-    enhance_response = await client.post(
-        "http://enhancer:8000/enhance_image",
-        files={"image": contents},
-        json={"defects": defects},
-    )
+        enhance_response = await client.post(
+            "http://enhancer:8000/enhance_image",
+            files={"image": contents},
+            data={"defects": defects},
+        )
+
     return Response(content=enhance_response.content, media_type="image/jpeg")
 
 
@@ -75,6 +81,14 @@ async def enhance_image_route(image: UploadFile = File(...)):
 async def fix_defect_route(
     image: UploadFile = File(...), defect_to_fix: str = Form(...)
 ):
+    """
+    Fixes a certain defect in an image.
+
+    Responses:
+    - 200 OK: Returns the enhanced image.
+    - 400 Bad Request: Input data is invalid (image or defect).
+    - 5xx: Error in the service.
+    """
     contents = await image.read()
     async with httpx.AsyncClient() as client:
         response = await client.post(
