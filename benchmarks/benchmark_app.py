@@ -8,11 +8,11 @@ import numpy as np
 from tqdm.asyncio import tqdm
 
 host = "51.250.19.218"
-host = "localhost"
+# host = "localhost"
 
 IMAGE_DIR = "./data/real_estate_images_clean/"
 ENHANCE_URL = f"http://{host}:8000/enhance_image"
-RPS = 100  # Requests per second
+RPS = 10  # Requests per second
 
 # Statistics
 total_images = 0
@@ -44,19 +44,25 @@ async def send_request(client, image_path):
 async def main():
     image_files = [
         os.path.join(IMAGE_DIR, f) for f in os.listdir(IMAGE_DIR) if f.endswith(".jpg")
-    ][:1000]
+    ][:100]
     # take a subset of images here!
+
+    start_time = time.time()
 
     async with httpx.AsyncClient() as client:
         for image_path in tqdm(image_files, desc="Processing images"):
-            await send_request(client, image_path)
-            # jitter = random.uniform(0.05, 0.15)  # Adding jitter between 50ms to 150ms
+            asyncio.create_task(send_request(client, image_path))
             await asyncio.sleep(1 / RPS)
+
+    elapsed_time = time.time() - start_time
+    actual_rps = total_images / elapsed_time
 
     response_times_np = np.array(response_times)
     avg_response_time = np.mean(response_times_np)
     percentiles = np.percentile(response_times_np, [95, 99, 99.9])
 
+    print(f"theoretical RPS: {RPS}")
+    print(f"actual RPS: {actual_rps:.2f}")
     print(f"Total images processed: {total_images}")
     print(f"Enhancements: {enhancement_count}")
     print(f"No enhancements needed: {no_enhancement_count}")
