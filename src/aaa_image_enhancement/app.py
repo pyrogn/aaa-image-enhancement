@@ -66,7 +66,7 @@ async def enhance_image_route(image: UploadFile = File(...)):
         defects = detect_response.json()
         logging.debug(f"Defects detected: {defects}")
         if not defects:
-            return PlainTextResponse("No enhancement needed", status_code=204)
+            return PlainTextResponse(status_code=204)
 
         enhance_response = await client.post(
             "http://enhancer:8000/enhance_image",
