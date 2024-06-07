@@ -37,7 +37,7 @@
 - Можно вставить множество картинок
 - Картинки отправляются на эндпоинт /enhance_image. Слева — оригинальная фотография. Если улучшения нет, то правая фотография будет отсутствовать.
 
-<img src=https://github.com/pyrogn/aaa-image-enhancement/assets/60060559/13f9668f-43e7-4069-b3d9-6a9400410ec6 height=400>
+<img src=https://github.com/pyrogn/aaa-image-enhancement/assets/60060559/3f712853-6713-4b6e-af8f-3bf15396c1d0 height=400>
 
 
 ### Запуск бэкенда
