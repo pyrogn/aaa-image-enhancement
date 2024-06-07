@@ -27,6 +27,17 @@ services:
     networks:
       - app-network
 
+  demo:
+    build:
+      context: .
+      dockerfile: ./demo/Dockerfile
+    ports:
+      - "5555:5000"
+    networks:
+      - app-network
+    profiles:
+      - demo
+
 networks:
   app-network:
     driver: bridge

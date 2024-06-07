@@ -27,7 +27,7 @@ def is_blurry(
 
 
 def is_low_light(
-    image: ImageConversions, threshold: int = 135
+    image: ImageConversions, threshold: int = 115
 ) -> dict[DefectNames, bool]:
     """Underexposure detection. Threshold is picked after some analysis."""
     avg_intensity = np.mean(image.to_grayscale())  # type: ignore

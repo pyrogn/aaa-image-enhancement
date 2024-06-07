@@ -28,6 +28,23 @@
 - `demo/` - простой сервис для демонстрации работы детекции и исправления
 - **[Dual-Choice](https://github.com/pyrogn/aaa-dual-choice)** - проект с оценкой субъективного качества фото
 
+## Запуск
+
+### Демонстрация
+
+- `docker compose --profiles demo up`
+- http://127.0.0.1:5555/
+
+### Запуск бэкенда
+
+- `docker compose up`
+- [Код приложения с описанием эндпоинтов](./src/aaa_image_enhancement/app.py)
+
+### Бенчмарки
+
+- Поднять сервис на сервере через предыдущую команду.
+- `python -m benchmark.benchmark_app localhost` (вставить адрес сервера, который будем нагружать). Например `python -m benchmark.benchmark_app --host 51.250.19.218 --rps 10`.
+
 ## Работа с репозиторием
 [![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/rye/main/artwork/badge.json)](https://rye-up.com) [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
