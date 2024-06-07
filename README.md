@@ -42,7 +42,9 @@
 ### Запуск бэкенда
 
 - `docker compose up`
-- [Код приложения с описанием эндпоинтов](./src/aaa_image_enhancement/app.py)
+- [Код главного приложения с описанием эндпоинтов](./src/aaa_image_enhancement/app.py)
+- [Код приложения-детектора](./src/aaa_image_enhancement/detector_app.py)
+- [Код приложения-улучшалки](./src/aaa_image_enhancement/enhancer_app.py)
 
 ### Бенчмарки
 
