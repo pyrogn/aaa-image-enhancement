@@ -20,6 +20,7 @@ dependencies = [
     "httpx>=0.27.0",
     "opencv-python>=4.9.0.80",
     "pandas>=2.2.2",
+    "aiofiles>=23.2.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
@@ -110,7 +111,8 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
-    "src/aaa_image_enhancement/exposure_enhancement.py"
+    "src/aaa_image_enhancement/external",
+    "experiments"
 ]
 # Same as Black.
 line-length = 88
@@ -180,3 +182,6 @@ exclude = [
     ".venv",
     "src/aaa_image_enhancement/exposure_enhancement.py",
 ]
+
+[tool.pytest.ini_options]
+addopts = "--ignore=EnhanceIMG/"

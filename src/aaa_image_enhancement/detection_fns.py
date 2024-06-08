@@ -5,7 +5,7 @@ import numpy as np
 from skimage.exposure import is_low_contrast as ski_is_low_contrast
 from skimage.restoration import estimate_sigma
 
-from aaa_image_enhancement.image_defects_detection import DefectNames
+from aaa_image_enhancement.image_defects import DefectNames
 from aaa_image_enhancement.image_utils import ImageConversions
 
 
@@ -26,8 +26,9 @@ def is_blurry(
 
 
 def is_low_light(
-    image: ImageConversions, threshold: int = 80
+    image: ImageConversions, threshold: int = 115
 ) -> dict[DefectNames, bool]:
+    """Underexposure detection. Threshold is picked after some analysis."""
     avg_intensity = np.mean(image.to_grayscale())  # type: ignore
     return {DefectNames.LOW_LIGHT: avg_intensity < threshold}
 

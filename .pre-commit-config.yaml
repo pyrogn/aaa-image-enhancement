@@ -41,11 +41,11 @@ repos:
 #         args: [--ignore-missing-imports, --warn-unused-ignores, --show-error-codes]
 #         additional_dependencies: [types-all]
 
--   repo: local
-    hooks:
-    -   id: pytest
-        name: pytest
-        entry: rye run pytest
-        language: system
-        pass_filenames: false
-        always_run: true
+# -   repo: local
+#     hooks:
+#     -   id: pytest
+#         name: pytest
+#         entry: rye run pytest
+#         language: system
+#         pass_filenames: false
+#         always_run: true

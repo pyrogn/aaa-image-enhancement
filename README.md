@@ -23,10 +23,52 @@
 - `src/aaa_image_enhancement/` - устанавливаемый Python проект с главным приложением
 - `experiments/` - различный код
 - `notebooks/` - ноутбуки с output, если потребуется для демонстрации
-- `models/` - модели, поднимаемые через `docker`
+- `models/` - модели или fastapi приложения, задекларированные в Dockerfile
 - `benchmarks/` - оценка производительности отдельных частей
 - `demo/` - простой сервис для демонстрации работы детекции и исправления
-- **[Dual-Choice](https://github.com/pyrogn/aaa-dual-choice)** - проект с оценкой субъективного качества фото
+- `tests/` - тесты приложения
+- **[Dual-Choice](https://github.com/pyrogn/aaa-dual-choice) - проект с оценкой субъективного качества фото**
+
+## Запуск
+
+### Демонстрация
+
+- `docker compose --profiles demo up`
+- Смотреть Flask приложение на порту 5555. К примеру, http://127.0.0.1:5555/
+- Можно вставить множество картинок
+- Картинки отправляются на эндпоинт `/enhance_image`. Слева — оригинальная фотография. Если улучшения нет, то правая фотография будет отсутствовать.
+
+<img src=https://github.com/pyrogn/aaa-image-enhancement/assets/60060559/3f712853-6713-4b6e-af8f-3bf15396c1d0 height=400>
+
+### Запуск бэкенда
+
+- `docker compose up` для запуска главного приложения, приложения-детектора и приложения-улучшалки
+- [Код главного приложения с описанием эндпоинтов](./src/aaa_image_enhancement/app.py)
+- [Код приложения-детектора](./src/aaa_image_enhancement/detector_app.py)
+- [Код приложения-улучшалки](./src/aaa_image_enhancement/enhancer_app.py)
+
+### Бенчмарки
+
+- Поднять сервис на сервере через `docker compose up`.
+- Установить Rye на другом устройстве/сервере. Выполнить `rye sync`. (знаю, что сложно, возможно, подключу devcontainers)
+- `python -m benchmarks.benchmark_app localhost` (вставить адрес сервера, который будем нагружать).
+
+Пример результата:
+
+```
+❯ python -m benchmarks.benchmark_app --host 51.250.19.218 --rps 10
+Processing images: 100%|█████████████████████████| 100/100 [00:10<00:00,  9.86it/s]
+theoretical RPS: 10
+actual RPS: 9.83
+Total images processed: 100
+Enhancements: 61
+No enhancements needed: 39
+Errors: 0
+Average response time: 0.0922 seconds
+95th percentile response time: 0.1877 seconds
+99th percentile response time: 0.2132 seconds
+99.9th percentile response time: 0.2476 seconds
+```
 
 ## Работа с репозиторием
 [![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/rye/main/artwork/badge.json)](https://rye-up.com) [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -44,10 +86,9 @@
 - ~~Типизация `mypy ./src`~~
 - More to come...
 
-## Инфраструктура
+## Инфраструктура (предстоит обновить)
 
-- https://pytorch.org/serve/
-- FastAPI
+- FastAPI, uvicorn
 - Docker, Docker Compose
 
 

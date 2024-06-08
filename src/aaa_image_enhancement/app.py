@@ -14,26 +14,15 @@ Routes:
     output: image (with specific enhancement)
 """
 
-import cv2
-import numpy as np
+import logging
+
+import httpx
 from fastapi import FastAPI, File, Form, Response, UploadFile
 from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel
 
-from aaa_image_enhancement.defects_detection_fns import (
-    classical_detectors,
-)
-from aaa_image_enhancement.enhance_image import EnhanceAgentFirst, ImageEnhancer
-from aaa_image_enhancement.image_defects_detection import (
-    DefectNames,
-    DefectsDetector,
-    ImageDefects,
-)
-from aaa_image_enhancement.image_utils import ImageConversions
-
+logging.basicConfig(level=logging.INFO)
 app = FastAPI()
-
-defects_detector = DefectsDetector(classical_detectors)
 
 
 class DetectedProblems(BaseModel):
@@ -41,32 +30,18 @@ class DetectedProblems(BaseModel):
 
 
 class EnhancementRequest(BaseModel):
-    defect_to_fix: DefectNames
-
-
-def detect_defects(image: np.ndarray) -> ImageDefects:
-    return defects_detector.find_defects(ImageConversions(image))
-
-
-def enhance_image(image: np.ndarray, defects: ImageDefects) -> np.ndarray:
-    enhance_agent = EnhanceAgentFirst(image, defects)
-    return enhance_agent.enhance_image()
-
-
-def fix_specific_defect(image: np.ndarray, defect_to_fix: DefectNames) -> np.ndarray:
-    image_enhancer = ImageEnhancer(image)
-    return image_enhancer.fix_defect(defect_to_fix)
+    defect_to_fix: str
 
 
 @app.post("/detect_problems", response_model=DetectedProblems)
 async def detect_problems_route(image: UploadFile = File(...)):
-    """Given image it sends back found problems."""
     contents = await image.read()
-    nparr = np.frombuffer(contents, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    defects = detect_defects(img)
-    problems = [defect for defect, value in defects.__dict__.items() if value]
-    return {"problems": problems}
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "http://detector:8000/get_defects", files={"image": contents}
+        )
+    logging.debug(f"Detect problems response: {response.json()}")
+    return response.json()
 
 
 @app.post("/enhance_image")
@@ -84,39 +59,43 @@ async def enhance_image_route(image: UploadFile = File(...)):
     - 400 Bad Request: Returns if the input data is invalid.
     """
     contents = await image.read()
-    nparr = np.frombuffer(contents, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    defects = detect_defects(img)
-    if not defects.has_defects():
-        return PlainTextResponse("No enhancement needed", status_code=204)
+    async with httpx.AsyncClient() as client:
+        detect_response = await client.post(
+            "http://detector:8000/get_defects", files={"image": contents}
+        )
+        defects = detect_response.json()
+        logging.debug(f"Defects detected: {defects}")
+        if not defects:
+            return PlainTextResponse(status_code=204)
 
-    enhanced_img = enhance_image(img, defects)
-    _, encoded_img = cv2.imencode(".jpg", enhanced_img)
-    return Response(content=encoded_img.tobytes(), media_type="image/jpeg")
-    # more complicated, but we can return applied_enhancements also
-    # response = {
-    #     "enhanced_image": encoded_img_bytes,
-    #     "applied_enhancements": applied_enhancements
-    # }
-    # return JSONResponse(content=response, media_type="application/json")
+        enhance_response = await client.post(
+            "http://enhancer:8000/enhance_image",
+            files={"image": contents},
+            data={"defects": defects},
+        )
+
+    return Response(content=enhance_response.content, media_type="image/jpeg")
 
 
 @app.post("/fix_defect")
 async def fix_defect_route(
     image: UploadFile = File(...), defect_to_fix: str = Form(...)
 ):
-    """Given image and defect name it fixes specific defect for a picture."""
+    """
+    Fixes a certain defect in an image.
+
+    Responses:
+    - 200 OK: Returns the enhanced image.
+    - 400 Bad Request: Input data is invalid (image or defect).
+    - 5xx: Error in the service.
+    """
     contents = await image.read()
-    nparr = np.frombuffer(contents, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-    try:
-        defect_enum = DefectNames[defect_to_fix]
-        enhanced_img = fix_specific_defect(img, defect_enum)
-    except KeyError:
-        return JSONResponse(status_code=400, content={"detail": "Invalid defect name"})
-    except ValueError as e:
-        return JSONResponse(status_code=400, content={"detail": str(e)})
-
-    _, encoded_img = cv2.imencode(".jpg", enhanced_img)
-    return Response(content=encoded_img.tobytes(), media_type="image/jpeg")
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "http://enhancer:8000/fix_defect",
+            files={"image": contents},
+            data={"defect_to_fix": defect_to_fix},
+        )
+    if response.status_code == 400:
+        return JSONResponse(status_code=400, content=response.json())
+    return Response(content=response.content, media_type="image/jpeg")

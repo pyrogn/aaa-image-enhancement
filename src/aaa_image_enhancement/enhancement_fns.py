@@ -1,12 +1,12 @@
-"""File with functions for image enhancement for specific defects."""
+"""Functions for image enhancement for specific defects."""
 
 import cv2
 import image_dehazer
 import numpy as np
 from cv2.typing import MatLike
 
-from aaa_image_enhancement.exposure_enhancement import enhance_image_exposure
-from aaa_image_enhancement.image_defects_detection import DefectNames
+from aaa_image_enhancement.external.exposure_enhancement import enhance_image_exposure
+from aaa_image_enhancement.image_defects import DefectNames
 
 
 def deblur_image(image: np.ndarray, sharpen_strength: int = 9) -> MatLike:
@@ -50,6 +50,15 @@ def enhance_low_light(
     return enhance_image_exposure(image, gamma=gamma, lambda_=lambda_)
 
 
+def enhance_low_light_3(image: np.ndarray, gamma: float = 1.5) -> np.ndarray:
+    invGamma = 1.0 / gamma
+    table = np.array(
+        [((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]
+    ).astype("uint8")
+    enhanced_image = cv2.LUT(image, table)
+    return enhanced_image
+
+
 # used for basic testing
 classical_enhancement_fns = [
     deblur_image,
@@ -59,9 +68,10 @@ classical_enhancement_fns = [
 ]
 
 # sorted, actually, from most to least important
+# one function can fix multiple defects
 ENHANCEMENT_MAP = {
     DefectNames.BLUR: deblur_image,
-    DefectNames.LOW_LIGHT: enhance_low_light,
+    DefectNames.LOW_LIGHT: enhance_low_light_3,
     DefectNames.POOR_WHITE_BALANCE: enhance_wb_image,
     DefectNames.NOISY: dehaze_image,
 }

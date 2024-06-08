@@ -1,27 +1,43 @@
-# start from dockerfiles, they are probably not optimal
-# not tested, need to add network, make sense of ports, volumes
-# version: '3'
 services:
-  app:
+  main_app:
     build: .
     ports:
       - "8000:8000"
-    volumes:
-      - ./src:/app/src
     depends_on:
-      - deblur
-      - low-light
+      - detector
+      - enhancer
+    networks:
+      - app-network
 
-  deblur:
-    build: ./models/deblur
+  detector:
+    build:
+      context: .
+      dockerfile: ./models/detector/Dockerfile
     ports:
-      - "8001:8080"
-    volumes:
-      - ./models/deblur:/usr/src/app
+      - "8001:8000"
+    networks:
+      - app-network
 
-  low-light:
-    build: ./models/low-light
+  enhancer:
+    build:
+      context: .
+      dockerfile: ./models/enhancer/Dockerfile
     ports:
-      - "8002:8080"
-    volumes:
-      - ./models/low-light:/usr/src/app
+      - "8002:8000"
+    networks:
+      - app-network
+
+  demo:
+    build:
+      context: .
+      dockerfile: ./demo/Dockerfile
+    ports:
+      - "5555:5000"
+    networks:
+      - app-network
+    profiles:
+      - demo
+
+networks:
+  app-network:
+    driver: bridge

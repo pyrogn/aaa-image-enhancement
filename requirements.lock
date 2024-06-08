@@ -6,8 +6,11 @@
 #   features: []
 #   all-features: true
 #   with-sources: false
+#   generate-hashes: false
 
 -e file:.
+aiofiles==23.2.1
+    # via aaa-image-enhancement
 annotated-types==0.6.0
     # via pydantic
 anyio==4.3.0
