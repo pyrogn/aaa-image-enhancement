@@ -1,4 +1,7 @@
-"""Functions for image enhancement for specific defects."""
+"""Functions for image enhancement for specific defects.
+
+ENHANCEMENT_MAP maps image defect with function that fixes it.
+"""
 
 import cv2
 import image_dehazer
@@ -50,7 +53,7 @@ def enhance_low_light(
     return enhance_image_exposure(image, gamma=gamma, lambda_=lambda_)
 
 
-def enhance_low_light_3(image: np.ndarray, gamma: float = 1.5) -> np.ndarray:
+def gamma_correction(image: np.ndarray, gamma: float = 1.5) -> np.ndarray:
     invGamma = 1.0 / gamma
     table = np.array(
         [((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]
@@ -67,11 +70,14 @@ classical_enhancement_fns = [
     enhance_low_light,
 ]
 
-# sorted, actually, from most to least important
-# one function can fix multiple defects
+# Sorted from most to least important
+# one function can fix multiple defects.
+# If you are to use ML model, then you should create map
+# DefectNames => address of service with model that supports REST API
+# and modify consequent code to work with local functions and remote calls.
 ENHANCEMENT_MAP = {
     DefectNames.BLUR: deblur_image,
-    DefectNames.LOW_LIGHT: enhance_low_light_3,
+    DefectNames.LOW_LIGHT: gamma_correction,
     DefectNames.POOR_WHITE_BALANCE: enhance_wb_image,
     DefectNames.NOISY: dehaze_image,
 }

@@ -28,14 +28,14 @@ class ImageEnhancer:
 
 # maybe we can have attribute applied_enhancements=list[str|DefectNames]
 # to keep track of enhancements
-class EnhanceAgent(Protocol):
-    """Autonomous agent to apply image enhancements using some rule."""
+class EnhanceStrategy(Protocol):
+    """Agent to apply image enhancements using some rule."""
 
     def __init__(self, img: np.ndarray, defects: ImageDefects) -> None: ...
     def enhance_image(self) -> np.ndarray: ...
 
 
-class EnhanceAgentFirst:
+class EnhanceStrategyFirst:
     """Simple strategy to apply top priority enhancement."""
 
     def __init__(self, img: np.ndarray, defects: ImageDefects) -> None:
@@ -53,7 +53,7 @@ class EnhanceAgentFirst:
         return self.img
 
 
-class EnhanceAgentMax:
+class EnhanceStrategyMax:
     """Simple strategy to apply all enhancements."""
 
     def __init__(self, img: np.ndarray, defects: ImageDefects) -> None:

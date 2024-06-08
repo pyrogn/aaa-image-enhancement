@@ -3,7 +3,10 @@ import numpy as np
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.responses import JSONResponse, Response
 
-from aaa_image_enhancement.enhancement_agents import EnhanceAgentFirst, ImageEnhancer
+from aaa_image_enhancement.enhancement_strategies import (
+    EnhanceStrategyFirst,
+    ImageEnhancer,
+)
 from aaa_image_enhancement.image_defects import DefectNames, ImageDefects
 
 app = FastAPI()
@@ -17,7 +20,7 @@ async def enhance_image_route(
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     defects_obj = ImageDefects(**{defect: True for defect in defects})
-    enhance_agent = EnhanceAgentFirst(img, defects_obj)
+    enhance_agent = EnhanceStrategyFirst(img, defects_obj)
     enhanced_img = enhance_agent.enhance_image()
     _, encoded_img = cv2.imencode(".jpg", enhanced_img)
     return Response(content=encoded_img.tobytes(), media_type="image/jpeg")

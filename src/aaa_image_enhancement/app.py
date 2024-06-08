@@ -7,7 +7,7 @@ Routes:
 
 - /enhance_image
     input: image
-    output: image (autonomously enhanced)
+    output: image (automatically enhanced)
 
 - /fix_defect
     input: image, defect_name (str)

@@ -3,8 +3,11 @@ import glob
 import cv2
 import numpy as np
 import pytest
-from aaa_image_enhancement.enhancement_agents import EnhanceAgentFirst, ImageEnhancer
 from aaa_image_enhancement.enhancement_fns import classical_enhancement_fns
+from aaa_image_enhancement.enhancement_strategies import (
+    EnhanceStrategyFirst,
+    ImageEnhancer,
+)
 from aaa_image_enhancement.image_defects import DefectNames, ImageDefects
 from aaa_image_enhancement.image_utils import ImageConversions
 
@@ -61,13 +64,13 @@ def test_image_fix_defect(test_image):
 
 
 def test_enhance_agent_first_no_defects(test_image, defects_all_false, image_enhancer):
-    agent = EnhanceAgentFirst(test_image, defects_all_false)
+    agent = EnhanceStrategyFirst(test_image, defects_all_false)
     enhanced_image = agent.enhance_image()
     assert np.array_equal(enhanced_image, test_image)
 
 
 def test_enhance_agent_first_with_defect(test_image, defects_with_blur, image_enhancer):
-    agent = EnhanceAgentFirst(test_image, defects_with_blur)
+    agent = EnhanceStrategyFirst(test_image, defects_with_blur)
     enhanced_image = agent.enhance_image()
     assert isinstance(enhanced_image, np.ndarray)
     assert enhanced_image.shape == test_image.shape
