@@ -1,15 +1,15 @@
-import os
-import torch
-import cv2
 import warnings
-import torchvision
-import numpy as np
-from IAT_enhance.utils import PSNR, validation, LossNetwork
-from IAT_enhance.model.IAT_main import IAT
-from torchvision.transforms import Normalize
-from PIL import Image
 
-def inference_iat(file_name: str, task: str = 'enhance', normalize: bool = False, device: str = 'cuda') -> np.ndarray:
+import numpy as np
+import torch
+from IAT_enhance.model.IAT_main import IAT
+from PIL import Image
+from torchvision.transforms import Normalize
+
+
+def inference_iat(
+    file_name: str, task: str = "enhance", normalize: bool = False, device: str = "cuda"
+) -> np.ndarray:
     # Weights path
     exposure_pretrain = "../IAT_enhance/best_Epoch_exposure.pth"
     enhance_pretrain = "../IAT_enhance/best_Epoch_lol_v1.pth"
@@ -18,17 +18,21 @@ def inference_iat(file_name: str, task: str = 'enhance', normalize: bool = False
 
     # Load Pre-train Weights
     model = IAT().to(device)
-    if task == 'exposure':
-        model.load_state_dict(torch.load(exposure_pretrain, map_location=torch.device(device)))
-    elif task == 'enhance':
-        model.load_state_dict(torch.load(enhance_pretrain, map_location=torch.device(device)))
+    if task == "exposure":
+        model.load_state_dict(
+            torch.load(exposure_pretrain, map_location=torch.device(device))
+        )
+    elif task == "enhance":
+        model.load_state_dict(
+            torch.load(enhance_pretrain, map_location=torch.device(device))
+        )
     else:
-        warnings.warn('Only could be exposure or enhance')
+        warnings.warn("Only could be exposure or enhance")
     model.eval()
 
     # Load Image
     img = Image.open(file_name)
-    img = (np.asarray(img) / 255.0)
+    img = np.asarray(img) / 255.0
     if img.shape[2] == 4:
         img = img[:, :, :3]
     input_tensor = torch.from_numpy(img).float().to(device)
@@ -49,4 +53,3 @@ def inference_iat(file_name: str, task: str = 'enhance', normalize: bool = False
 # # Convert tensor to PIL image and save if needed
 # enhanced_image_pil = Image.fromarray(enhanced_image_np)
 # enhanced_image_pil.save('enhanced_image.jpg')
-

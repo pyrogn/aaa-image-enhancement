@@ -3,8 +3,8 @@ import glob
 import cv2
 import numpy as np
 import pytest
-from aaa_image_enhancement.defects_detection_fns import classical_detectors
-from aaa_image_enhancement.image_defects_detection import (
+from aaa_image_enhancement.detection_fns import classical_detectors
+from aaa_image_enhancement.image_defects import (
     DefectNames,
     DefectsDetector,
     ImageDefects,

@@ -1,3 +1,11 @@
+"""Basic classes for passing information about defects detection.
+
+DefectNames is an Enum class for selecting a defect in general.
+
+ImageDefects is a dataclass for passing information
+on particular image defects between functions.
+"""
+
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
@@ -5,11 +13,12 @@ from enum import Enum
 from aaa_image_enhancement.image_utils import ImageConversions
 
 
-# описание, примеры и кандидаты на добавление находятся в гугл доке
 class DefectNames(Enum):
     """Defect Enums to use in assignment and indexing.
 
     Value is a name of an ImageDefects dataclass attribute.
+
+    Описание, примеры и кандидаты на добавление находятся в гугл доке
     """
 
     BLUR = "blur"
@@ -21,15 +30,6 @@ class DefectNames(Enum):
     JPEG_ARTIFACTS = "jpeg_artifacts"
     GLARING = "glaring"
     ROTATION = "rotation"
-    # next keys will be deleted
-    DARK_LIGHT = "dark_light"
-    DARK_HISTOGRAM = "dark_histogram"
-    DARK_THRESHOLD = "dark_threshold"
-    DARK_LOCAL_CONTRAST = "dark_local_contrast"
-    DARK_EDGES = "dark_edges"
-    DARK_ADAPTIVE_THRESHOLD = "dark_adaptive_threshold"
-    DARK_V_CHANNEL = "dark_v_channel"
-    DARK_BLOCKS = "dark_blocks"
 
     @classmethod
     def from_value(cls, value: str):

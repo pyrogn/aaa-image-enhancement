@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 from fastapi import FastAPI, File, UploadFile
 
-from aaa_image_enhancement.defects_detection_fns import is_low_light
-from aaa_image_enhancement.image_defects_detection import DefectsDetector
+from aaa_image_enhancement.detection_fns import is_low_light
+from aaa_image_enhancement.image_defects import DefectsDetector
 from aaa_image_enhancement.image_utils import ImageConversions
 
 # we include only low light detection for now

@@ -1,4 +1,4 @@
-"""Add synthetic distortions to clean images to make a dataset."""
+"""Add synthetic distortions to clean images."""
 
 import random
 from io import BytesIO
@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageEnhance
 
-from aaa_image_enhancement.image_defects_detection import DefectNames
+from aaa_image_enhancement.image_defects import DefectNames
 from aaa_image_enhancement.image_utils import ImageConversions
 
 

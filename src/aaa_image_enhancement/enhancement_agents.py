@@ -1,3 +1,5 @@
+"""Classes for applying enhancements based on found defects."""
+
 from typing import Protocol
 
 import numpy as np
@@ -6,11 +8,11 @@ from aaa_image_enhancement.enhancement_fns import (
     ENHANCEMENT_MAP,
     get_enhancement_function,
 )
-from aaa_image_enhancement.image_defects_detection import DefectNames, ImageDefects
+from aaa_image_enhancement.image_defects import DefectNames, ImageDefects
 
 
 class ImageEnhancer:
-    """Image enhancer based on classical techniques"""
+    """Image enhancer to apply certain enhancement."""
 
     def __init__(self, img: np.ndarray) -> None:
         self.img = img

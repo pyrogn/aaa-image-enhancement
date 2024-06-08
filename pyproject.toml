@@ -111,7 +111,8 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
-    "src/aaa_image_enhancement/exposure_enhancement.py"
+    "src/aaa_image_enhancement/exposure_enhancement.py",
+    "experiments"
 ]
 # Same as Black.
 line-length = 88
