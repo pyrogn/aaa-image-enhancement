@@ -68,11 +68,15 @@ Average response time: 0.0922 seconds
 99.9th percentile response time: 0.2476 seconds
 ```
 
+### Тестирование
+
+- `make test`
+
 ## Инфраструктура
 
 - FastAPI, uvicorn
 - Docker Compose
-- pytest для тестирования
+- pytest внутри Docker для тестирования
 
 ## Модели
 
@@ -83,7 +87,7 @@ Average response time: 0.0922 seconds
 
 Это эксперимент в [mermaid](https://mermaid.js.org/).
 
-### Диаграмма архитектуры системы
+### Архитектура системы
 
 ```mermaid
 graph LR

@@ -23,6 +23,18 @@ services:
     networks:
       - app-network
 
+  test:
+    build: .
+    command: ["pytest", "--disable-warnings"]
+    depends_on:
+      - main_app
+      - detector
+      - enhancer
+    networks:
+      - app-network
+    profiles:
+      - test
+
   demo:
     build:
       context: .

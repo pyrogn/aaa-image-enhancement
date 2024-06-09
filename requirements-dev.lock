@@ -187,7 +187,7 @@ numpy==1.26.4
     # via torchvision
 ocrmac==0.1.6
     # via aaa-image-enhancement
-opencv-contrib-python==4.9.0.80
+opencv-contrib-python==4.10.0.82
     # via aaa-image-enhancement
 opencv-python==4.9.0.80
     # via aaa-image-enhancement
@@ -272,6 +272,7 @@ python-multipart==0.0.9
 pytz==2024.1
     # via pandas
 pywavelets==1.6.0
+    # via aaa-image-enhancement
     # via imagehash
 pyyaml==6.0.1
     # via pre-commit
