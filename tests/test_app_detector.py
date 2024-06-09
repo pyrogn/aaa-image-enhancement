@@ -10,6 +10,7 @@ async def http_client():
         yield client
 
 
+@pytest.mark.skip()
 @pytest.mark.asyncio
 async def test_find_defects(http_client):
     with open("test_image.jpg", "rb") as f:

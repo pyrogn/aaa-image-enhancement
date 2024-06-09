@@ -80,3 +80,14 @@ class ImageConversions:
         if bbox:
             self.img = self.pil_to_numpy(pil_img.crop(bbox))
         return self
+
+
+def decode_image(image_bytes: bytes) -> np.ndarray:
+    nparr = np.frombuffer(image_bytes, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    return img
+
+
+def encode_image(image: np.ndarray) -> bytes:
+    _, encoded_img = cv2.imencode(".jpg", image)
+    return encoded_img.tobytes()

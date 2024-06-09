@@ -1,6 +1,3 @@
-import glob
-
-import cv2
 import numpy as np
 import pytest
 from aaa_image_enhancement.detection_fns import classical_detectors
@@ -13,19 +10,8 @@ from aaa_image_enhancement.image_utils import ImageConversions
 
 
 @pytest.fixture
-def image_path():
-    return glob.glob("./data/real_estate_images/*.jpg")[0]
-
-
-@pytest.fixture
 def test_image():
     img = np.zeros((100, 100, 3), dtype=np.uint8)
-    return ImageConversions(img)
-
-
-@pytest.fixture
-def image(image_path):
-    img = cv2.imread(image_path)
     return ImageConversions(img)
 
 
@@ -45,3 +31,18 @@ def test_class_detector(test_image):
     for k, v in result.__dict__.items():
         assert isinstance(k, str)
         assert isinstance(v, bool | np.bool_)
+
+
+def test_image_defects_attributes():
+    defects = ImageDefects()
+    for defect in DefectNames:
+        assert hasattr(defects, defect.value)
+
+
+def test_image_defects_initialization():
+    defects = ImageDefects(blur=True, low_light=False)
+    assert defects.blur is True  # type: ignore
+    assert defects.low_light is False  # type: ignore
+    for defect in DefectNames:
+        if defect.value not in ["blur", "low_light"]:
+            assert getattr(defects, defect.value) is False
