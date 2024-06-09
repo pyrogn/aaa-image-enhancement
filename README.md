@@ -83,6 +83,25 @@ Average response time: 0.0922 seconds
 
 Это эксперимент в [mermaid](https://mermaid.js.org/).
 
+### Диаграмма архитектуры системы
+
+```mermaid
+graph LR
+    subgraph "Internet"
+        style Internet fill:transparent, stroke-dasharray: 5 5
+        client[Client]
+        subgraph "Server (Docker network)"
+            main[Main App]
+            detector[Detector App]
+            enhancer[Enhancer App]
+        end
+    end
+
+    client <--> main
+    main <--> detector
+    main <--> enhancer
+```
+
 ### API
 
 ```mermaid
@@ -99,6 +118,62 @@ graph LR
 graph LR
     A[Client] -->|Upload Image and Defect Name| D["/fix_defect"]
     D -->|Enhanced Image| A
+```
+
+### Code structure
+
+Сложно передать диаграммой, здесь поверхностно и упущена часть взаимодействий, но по сути.
+
+Пояснения:
+- `ImageConversions` - вспомогательный класс для манипулирования картинками.
+- `ImageDefects` - это датакласс, который создаётся из Enum `DefectsNames` и используется для передачи информации о дефектах.
+- `DefectsDetector`  содержит в себе список из функций-детекторов, которые по картинке выдают найденные дефекты, которые будут отображены в возвращаемом `ImageDefects`.
+- `ImageEnhancer` имеет мапу из функций (DefectNames => Callable), и для конкретного дефекта вызывает соответсвующую функцию для исправления.
+- `EnhanceStrategy` нужен для принятия решения об исправлении ряда дефектов. К примеру, исправляет только первый (самый важный) в EnhanceStrategyFirst. Или все дефекты, и надо соответствовать интерфейсу.
+
+```mermaid
+classDiagram
+    class DefectsDetector {
+        +find_defects(image: ImageConversions) : ImageDefects
+    }
+    class ImageEnhancer {
+        +fix_defect(defect: DefectNames) : np.ndarray
+    }
+    class EnhanceStrategy {
+        <<interface>>
+        +enhance_image() : np.ndarray
+    }
+    class EnhanceStrategyFirst {
+        +enhance_image() : np.ndarray
+    }
+    class ImageDefects {
+        +has_defects() : bool
+    }
+    class DefectNames {
+        <<enumeration>>
+        BLUR
+        LOW_LIGHT
+        LOW_CONTRAST
+        POOR_WHITE_BALANCE
+        NOISY
+        ...
+    }
+    class ImageConversions {
+        +to_numpy() : np.ndarray
+        +to_pil() : Image.Image
+        +to_cv2() : np.ndarray
+        +to_grayscale() : np.ndarray
+    }
+
+    DefectsDetector --> ImageDefects
+    DefectsDetector --> ImageConversions
+
+    ImageEnhancer --> DefectNames
+
+    EnhanceStrategy <|.. EnhanceStrategyFirst
+
+    EnhanceStrategyFirst --> ImageDefects
+    EnhanceStrategyFirst --> ImageEnhancer
 ```
 
 ## Работа с репозиторием

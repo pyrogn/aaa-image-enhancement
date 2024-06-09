@@ -31,14 +31,6 @@ class DefectNames(Enum):
     GLARING = "glaring"
     ROTATION = "rotation"
 
-    @classmethod
-    def from_value(cls, value: str):
-        # might be a bit faster
-        for member in cls:
-            if member.value == value:
-                return member
-        raise ValueError(f"No enum member found for value: {value}")
-
 
 @dataclass
 class ImageDefects:
@@ -60,12 +52,6 @@ class ImageDefects:
     def has_defects(self) -> bool:
         """Returns true if found at least one defect."""
         return any(self.__dict__.values())
-
-
-# Почитать про протокол
-# https://idego-group.com/blog/2023/02/21/we-need-to-talk-about-protocols-in-python/
-# class DefectDetector(Protocol):
-#     def __call__(self, image: ImageConversions, **kwargs) -> bool: ...
 
 
 class DefectsDetector:

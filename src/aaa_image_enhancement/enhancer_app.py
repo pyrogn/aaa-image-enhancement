@@ -35,7 +35,7 @@ async def fix_defect_route(
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     try:
-        defect_enum = DefectNames.from_value(defect_to_fix)
+        defect_enum = DefectNames(defect_to_fix)
         image_enhancer = ImageEnhancer(img)
         enhanced_img = image_enhancer.fix_defect(defect_enum)
     except (KeyError, ValueError):
