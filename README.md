@@ -125,6 +125,12 @@ graph LR
     D -->|Enhanced Image| A
 ```
 
+Красивую автоматическую документацию также можно посмотреть, если
+- Поднять сервис `make up`
+- Зайти на http://{host}:8000/docs или http://{host}:8000/redoc
+
+<img height="300" alt="image" src="https://github.com/pyrogn/aaa-image-enhancement/assets/60060559/c1f25fd7-0c15-4d4a-8b91-8812482b89cd">
+
 ### Code structure
 
 Сложно передать диаграммой, здесь поверхностно и упущена часть взаимодействий и атрибутов, но по сути.
