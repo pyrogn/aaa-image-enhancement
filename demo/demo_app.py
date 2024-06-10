@@ -1,3 +1,5 @@
+"""App for demonstration of automatic image enhancement."""
+
 import logging
 import os
 from logging import Logger
@@ -31,7 +33,6 @@ def upload_images():
             with open(img_path, "rb") as img_file:
                 img_data = img_file.read()
 
-            # Enhance image
             enhance_response = requests.post(
                 "http://main_app:8000/enhance_image", files={"image": img_data}
             )
