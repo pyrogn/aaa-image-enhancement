@@ -60,25 +60,10 @@
 ### Бенчмарки
 
 - Поднять сервис на сервере через `make up`.
-- Установить Rye на другом устройстве/сервере. Выполнить `rye sync`. (знаю, что сложно, возможно, подключу devcontainers или запуск через докер)
-- `python -m benchmarks.benchmark_app localhost` (вставить адрес сервера, который будем нагружать).
+- Установить Rye на другом устройстве/сервере. Выполнить `rye sync --features test`. (знаю, что сложно, возможно, подключу devcontainers или запуск через докер)
+- `locust -f benchmarks/benchmark_app.py --host=http://51.250.19.218:8000` (вставить адрес сервера, который будем нагружать и запустить нагрузку через интерфейс http://localhost:8089/).
 
-Пример результата:
-
-```
-❯ python -m benchmarks.benchmark_app --host 51.250.19.218 --rps 10
-Processing images: 100%|█████████████████████████| 100/100 [00:10<00:00,  9.86it/s]
-theoretical RPS: 10
-actual RPS: 9.83
-Total images processed: 100
-Enhancements: 61
-No enhancements needed: 39
-Errors: 0
-Average response time: 0.0922 seconds
-95th percentile response time: 0.1877 seconds
-99th percentile response time: 0.2132 seconds
-99.9th percentile response time: 0.2476 seconds
-```
+На сервере с двумя 2GHz ядрами достигается ~ 15 RPS с временем ответа 100-300ms.
 
 ### Тестирование
 
@@ -88,10 +73,12 @@ Average response time: 0.0922 seconds
 
 ## Инфраструктура
 
-- FastAPI, uvicorn
+- Rye для менеджмента зависимостей
+- FastAPI, uvicorn для бэкенда
 - Docker Compose
 - pytest внутри Docker для тестирования
 - CI для независимого запуска тестов и линтера
+- locust для нагрузочного тестирования
 
 ## Модели
 
