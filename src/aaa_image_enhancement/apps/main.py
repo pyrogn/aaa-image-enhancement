@@ -19,14 +19,14 @@ import logging
 import httpx
 from fastapi import FastAPI, File, Form, Response, UploadFile
 from fastapi.responses import JSONResponse, PlainTextResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 
 logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 
-class DetectedProblems(BaseModel):
-    problems: list[str]
+class DetectedProblems(RootModel):
+    root: list[str]
 
 
 class EnhancementRequest(BaseModel):

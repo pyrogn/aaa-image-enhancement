@@ -27,4 +27,4 @@ async def test_find_defects(http_client, test_image_bytes):
         files={"image": ("test_image.jpg", test_image_bytes, "image/jpeg")},
     )
     assert response.status_code == 200
-    assert response.json()
+    assert isinstance(response.json(), list)

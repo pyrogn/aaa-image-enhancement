@@ -1,9 +1,12 @@
 # AAA ML Курсовой проект
 
+Тематические фото для привлечения внимания.
+
 <img src=https://github.com/pyrogn/aaa-image-enhancement/assets/60060559/95375b2f-fc93-4851-889e-40052e800f14 height=200>
 <img src=https://github.com/pyrogn/aaa-image-enhancement/assets/60060559/938d7e83-e212-453e-998c-4a4d790b72be height=200>
 <img src=https://github.com/pyrogn/aaa-image-enhancement/assets/60060559/13f9668f-43e7-4069-b3d9-6a9400410ec6 height=200>
 
+Привлек? Отлично, далее идет описание проекта и остальные детали.
 
 ## Тема: 10. Автоулучшение фото
 
@@ -45,6 +48,7 @@
 ### Запуск бэкенда
 
 - `make up` или `docker compose up` для запуска главного приложения, приложения-детектора и приложения-улучшалки
+- Взаимодействовать с портом 8000 по эндоинтам, описанным в главном приложении.
 - [Код главного приложения с описанием эндпоинтов](./src/aaa_image_enhancement/apps/main.py)
 - [Код приложения-детектора](./src/aaa_image_enhancement/apps/detector.py)
 - [Код приложения-улучшалки](./src/aaa_image_enhancement/apps/enhancer.py)
