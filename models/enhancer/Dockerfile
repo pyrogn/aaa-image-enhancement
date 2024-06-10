@@ -9,4 +9,4 @@ COPY ./src /app/src
 RUN uv pip install --system -e .
 RUN uv pip install --system opencv-contrib-python-headless
 
-CMD ["uvicorn", "src.aaa_image_enhancement.enhancer_app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.aaa_image_enhancement.apps.enhancer:app", "--host", "0.0.0.0", "--port", "8000"]

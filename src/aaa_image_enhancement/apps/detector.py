@@ -1,11 +1,10 @@
 # detector_service.py
-from fastapi import FastAPI, File, UploadFile
-
 from aaa_image_enhancement.detection_fns import is_low_light
 from aaa_image_enhancement.image_defects import DefectsDetector, ImageDefects
 from aaa_image_enhancement.image_utils import ImageConversions, decode_image
+from fastapi import FastAPI, File, UploadFile
 
-# Мы включаем только обнаружение низкой освещенности
+# Мы включаем только детекцию низкой освещенности
 # Другие детекторы (и соответствующее улучшение) сейчас работают плохо
 detector = DefectsDetector([is_low_light])
 

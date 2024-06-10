@@ -3,7 +3,7 @@ import httpx
 import numpy as np
 import pytest
 import pytest_asyncio
-from aaa_image_enhancement.app import app
+from aaa_image_enhancement.apps.main import app
 
 
 @pytest_asyncio.fixture

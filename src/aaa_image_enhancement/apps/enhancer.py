@@ -1,12 +1,11 @@
-from fastapi import FastAPI, File, Form, UploadFile
-from fastapi.responses import JSONResponse, Response
-
 from aaa_image_enhancement.enhancement_strategies import (
     EnhanceStrategyFirst,
     ImageEnhancer,
 )
 from aaa_image_enhancement.image_defects import DefectNames, ImageDefects
 from aaa_image_enhancement.image_utils import decode_image, encode_image
+from fastapi import FastAPI, File, Form, UploadFile
+from fastapi.responses import JSONResponse, Response
 
 
 def enhance_image(image_bytes: bytes, defects: list[str]) -> bytes:
