@@ -87,6 +87,7 @@ Average response time: 0.0922 seconds
 - FastAPI, uvicorn
 - Docker Compose
 - pytest внутри Docker для тестирования
+- CI для независимого запуска тестов и линтера
 
 ## Модели
 
