@@ -1,6 +1,6 @@
 """Functions for image enhancement for specific defects.
 
-ENHANCEMENT_MAP maps image defect with function that fixes it.
+ENHANCEMENT_MAP maps image defect (Enum) with a function that fixes it.
 """
 
 import cv2

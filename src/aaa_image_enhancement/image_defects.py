@@ -55,16 +55,35 @@ class ImageDefects:
 
 
 class DefectsDetector:
-    def __init__(self, detectors: list[Callable]) -> None:
-        """_summary_
+    """
+    Class to detect defects in images using provided detection functions.
+
+    Attributes:
+        detectors (list[Callable]): List of detection functions.
+    """
+
+    def __init__(self, detectors: list[Callable[[ImageConversions], dict]]) -> None:
+        """
+        Initialize DefectsDetector with a list of detection functions.
 
         Args:
-            detectors (list[Callable]): detectors should be sorted from least to most
-                important, because later ones can override results
+            detectors (list[Callable[[ImageConversions], dict]]): Detectors should be
+                sorted from least to most important,
+                because later ones can override results.
         """
         self.detectors = detectors
 
     def find_defects(self, image: ImageConversions, **kwargs) -> ImageDefects:
+        """
+        Detect defects in the given image.
+
+        Args:
+            image (ImageConversions): The image to be analyzed for defects.
+            **kwargs: Additional arguments for detection functions.
+
+        Returns:
+            ImageDefects: The detected defects in the image.
+        """
         defects = ImageDefects()
         for detector in self.detectors:
             # нельзя передать параметры, а надо ли?

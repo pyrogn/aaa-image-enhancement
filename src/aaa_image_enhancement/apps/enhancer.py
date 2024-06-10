@@ -1,3 +1,9 @@
+"""
+Enhancement service for image defects using FastAPI.
+
+This service applies enhancements to images based on detected defects.
+"""
+
 from aaa_image_enhancement.enhancement_strategies import (
     EnhanceStrategyFirst,
     ImageEnhancer,
@@ -9,6 +15,16 @@ from fastapi.responses import JSONResponse, Response
 
 
 def enhance_image(image_bytes: bytes, defects: list[str]) -> bytes:
+    """
+    Enhance the image based on the detected defects.
+
+    Args:
+        image_bytes (bytes): The image data in bytes.
+        defects (list[str]): List of detected defects.
+
+    Returns:
+        bytes: The enhanced image data.
+    """
     img = decode_image(image_bytes)
     defects_obj = ImageDefects(**{defect: True for defect in defects})
     enhance_agent = EnhanceStrategyFirst(img, defects_obj)
@@ -17,6 +33,16 @@ def enhance_image(image_bytes: bytes, defects: list[str]) -> bytes:
 
 
 def fix_defect(image_bytes: bytes, defect_to_fix: str) -> bytes:
+    """
+    Fix a specific defect in the image.
+
+    Args:
+        image_bytes (bytes): The image data in bytes.
+        defect_to_fix (str): The defect to fix.
+
+    Returns:
+        bytes: The enhanced image data.
+    """
     img = decode_image(image_bytes)
     defect_enum = DefectNames(defect_to_fix)
     image_enhancer = ImageEnhancer(img)
@@ -31,6 +57,18 @@ app = FastAPI()
 async def enhance_image_route(
     image: UploadFile = File(...), defects: list[str] = Form(...)
 ):
+    """
+    API endpoint to enhance the image based on detected defects.
+
+    Args:
+        image (UploadFile): The uploaded image file.
+        defects (list[str]): List of detected defects.
+            Names of defects can be found in ImageDefects attributes
+                or DefectNames values.
+
+    Returns:
+        Response: The enhanced image or an error message.
+    """
     contents = await image.read()
     try:
         enhanced_image_bytes = enhance_image(contents, defects)
@@ -43,6 +81,18 @@ async def enhance_image_route(
 async def fix_defect_route(
     image: UploadFile = File(...), defect_to_fix: str = Form(...)
 ):
+    """
+    API endpoint to fix a specific defect in the image.
+
+    Args:
+        image (UploadFile): The uploaded image file.
+        defect_to_fix (str): The defect to fix.
+            Names of defects can be found in ImageDefects attributes
+                or DefectNames values.
+
+    Returns:
+        Response: The enhanced image or an error message.
+    """
     contents = await image.read()
     try:
         enhanced_image_bytes = fix_defect(contents, defect_to_fix)
