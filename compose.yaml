@@ -13,8 +13,6 @@ services:
     build:
       context: .
       dockerfile: ./models/detector/Dockerfile
-    ports:
-      - "8001:8000"
     networks:
       - app-network
 
@@ -22,10 +20,20 @@ services:
     build:
       context: .
       dockerfile: ./models/enhancer/Dockerfile
-    ports:
-      - "8002:8000"
     networks:
       - app-network
+
+  test:
+    build: .
+    command: ["pytest", "--disable-warnings"]
+    depends_on:
+      - main_app
+      - detector
+      - enhancer
+    networks:
+      - app-network
+    profiles:
+      - test
 
   demo:
     build:

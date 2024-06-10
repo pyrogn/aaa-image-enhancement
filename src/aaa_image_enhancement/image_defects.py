@@ -31,14 +31,6 @@ class DefectNames(Enum):
     GLARING = "glaring"
     ROTATION = "rotation"
 
-    @classmethod
-    def from_value(cls, value: str):
-        # might be a bit faster
-        for member in cls:
-            if member.value == value:
-                return member
-        raise ValueError(f"No enum member found for value: {value}")
-
 
 @dataclass
 class ImageDefects:
@@ -62,23 +54,36 @@ class ImageDefects:
         return any(self.__dict__.values())
 
 
-# Почитать про протокол
-# https://idego-group.com/blog/2023/02/21/we-need-to-talk-about-protocols-in-python/
-# class DefectDetector(Protocol):
-#     def __call__(self, image: ImageConversions, **kwargs) -> bool: ...
-
-
 class DefectsDetector:
-    def __init__(self, detectors: list[Callable]) -> None:
-        """_summary_
+    """
+    Class to detect defects in images using provided detection functions.
+
+    Attributes:
+        detectors (list[Callable]): List of detection functions.
+    """
+
+    def __init__(self, detectors: list[Callable[[ImageConversions], dict]]) -> None:
+        """
+        Initialize DefectsDetector with a list of detection functions.
 
         Args:
-            detectors (list[Callable]): detectors should be sorted from least to most
-                important, because later ones can override results
+            detectors (list[Callable[[ImageConversions], dict]]): Detectors should be
+                sorted from least to most important,
+                because later ones can override results.
         """
         self.detectors = detectors
 
     def find_defects(self, image: ImageConversions, **kwargs) -> ImageDefects:
+        """
+        Detect defects in the given image.
+
+        Args:
+            image (ImageConversions): The image to be analyzed for defects.
+            **kwargs: Additional arguments for detection functions.
+
+        Returns:
+            ImageDefects: The detected defects in the image.
+        """
         defects = ImageDefects()
         for detector in self.detectors:
             # нельзя передать параметры, а надо ли?

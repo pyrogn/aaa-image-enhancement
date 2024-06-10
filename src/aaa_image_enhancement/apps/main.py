@@ -1,17 +1,16 @@
-"""Basic asynchronous backend in FastAPI.
+"""
+Basic asynchronous backend in FastAPI.
 
-Routes:
+This module defines three routes:
 - /detect_problems:
-    input: image
-    output: dictionary with defects
-
-- /enhance_image
-    input: image
-    output: image (autonomously enhanced)
-
-- /fix_defect
-    input: image, defect_name (str)
-    output: image (with specific enhancement)
+    Input: image
+    Output: list of detected defects
+- /enhance_image:
+    Input: image
+    Output: enhanced image or status indicating no enhancement needed
+- /fix_defect:
+    Input: image, defect_name (str)
+    Output: image with the specific enhancement applied
 """
 
 import logging
@@ -19,22 +18,35 @@ import logging
 import httpx
 from fastapi import FastAPI, File, Form, Response, UploadFile
 from fastapi.responses import JSONResponse, PlainTextResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 
 logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 
-class DetectedProblems(BaseModel):
-    problems: list[str]
+class DetectedDefects(RootModel):
+    """Model for detected defects in an image."""
+
+    root: list[str]
 
 
 class EnhancementRequest(BaseModel):
+    """Model for an enhancement request."""
+
     defect_to_fix: str
 
 
-@app.post("/detect_problems", response_model=DetectedProblems)
+@app.post("/detect_problems", response_model=DetectedDefects)
 async def detect_problems_route(image: UploadFile = File(...)):
+    """
+    Detect problems in the uploaded image.
+
+    Args:
+        image (UploadFile): The uploaded image file.
+
+    Returns:
+        DetectedProblems: A list of detected defects.
+    """
     contents = await image.read()
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -45,18 +57,19 @@ async def detect_problems_route(image: UploadFile = File(...)):
 
 
 @app.post("/enhance_image")
-async def enhance_image_route(image: UploadFile = File(...)):
+async def enhance_image_route(image: UploadFile = File(...)) -> Response:
     """
-    Enhances the image if defects are detected;
-    otherwise, indicates no enhancement needed.
+    Enhance the image if defects are detected;
+    otherwise, indicate no enhancement needed.
 
-    Parameters:
-    - image (UploadFile): The image file to be processed.
+    Args:
+        image (UploadFile): The image file to be processed.
 
-    Responses:
-    - 200 OK: Returns the enhanced image.
-    - 204 No Content: Returns if no enhancement is needed.
-    - 400 Bad Request: Returns if the input data is invalid.
+    Returns:
+        Response:
+            - 200 OK: Returns the enhanced image.
+            - 204 No Content: Returns if no enhancement is needed.
+            - 400 Bad Request: Returns if the input data is invalid.
     """
     contents = await image.read()
     async with httpx.AsyncClient() as client:
@@ -82,12 +95,14 @@ async def fix_defect_route(
     image: UploadFile = File(...), defect_to_fix: str = Form(...)
 ):
     """
-    Fixes a certain defect in an image.
+    Fix a specific defect in the image.
 
-    Responses:
-    - 200 OK: Returns the enhanced image.
-    - 400 Bad Request: Input data is invalid (image or defect).
-    - 5xx: Error in the service.
+    Args:
+        image (UploadFile): The uploaded image file.
+        defect_to_fix (str): The defect to fix.
+
+    Returns:
+        Response: The enhanced image or an error message.
     """
     contents = await image.read()
     async with httpx.AsyncClient() as client:
