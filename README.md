@@ -14,7 +14,7 @@
 
 ## Презентация решения
 
-[**Google Slides**](https://docs.google.com/presentation/d/1CvOWqobmL6lWt8M2SMFbaOgiBde4Gu7QtYTHPpbqZ6E/edit?usp=sharing)https://docs.google.com/presentation/d/1CvOWqobmL6lWt8M2SMFbaOgiBde4Gu7QtYTHPpbqZ6E/edit?usp=sharing
+[**Google Slides**](https://docs.google.com/presentation/d/1CvOWqobmL6lWt8M2SMFbaOgiBde4Gu7QtYTHPpbqZ6E/edit?usp=sharing)
 
 ## Команда
 
