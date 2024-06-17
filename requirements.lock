@@ -192,7 +192,7 @@ networkx==3.3
     # via torch
 nodeenv==1.8.0
     # via pre-commit
-numpy==1.26.4
+numpy==2.0.0
     # via aaa-image-enhancement
     # via contourpy
     # via image-dehazer

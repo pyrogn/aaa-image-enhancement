@@ -1,4 +1,3 @@
-# not tested
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -8,6 +7,7 @@ RUN pip install uv
 
 COPY ./src /app/src
 COPY ./tests /app/tests
+
 RUN uv pip install --system -e .[test]
 RUN uv pip install --system opencv-contrib-python-headless
 
